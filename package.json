@@ -1,0 +1,22 @@
+{
+  "name": "disputr",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "dev": "corepack pnpm --filter @disputr/frontend dev",
+    "dev:backend": "corepack pnpm --filter @disputr/backend dev",
+    "build": "corepack pnpm -r build",
+    "lint": "corepack pnpm -r lint",
+    "typecheck": "corepack pnpm -r typecheck",
+    "test": "vitest run && corepack pnpm -r test",
+    "env:check": "tsx scripts/env_check.ts",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

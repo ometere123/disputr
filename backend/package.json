@@ -1,0 +1,31 @@
+{
+  "name": "@disputr/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "corepack pnpm --filter @disputr/db build && wrangler dev",
+    "build": "tsc -p tsconfig.json",
+    "deploy": "corepack pnpm --filter @disputr/db build && wrangler deploy",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@disputr/db": "workspace:*",
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.3",
+    "drizzle-orm": "^0.38.4",
+    "genlayer-js": "^1.2.0",
+    "hono": "^4.6.14",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250604.0",
+    "@types/node": "^20.17.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "wrangler": "^4.20.0"
+  }
+}

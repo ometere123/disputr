@@ -1,0 +1,27 @@
+name = "disputr-api"
+main = "src/index.ts"
+compatibility_date = "2026-06-04"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[observability]
+enabled = true
+
+[vars]
+NEXT_PUBLIC_GENLAYER_CHAIN_ID = "61999"
+NEXT_PUBLIC_GENLAYER_RPC_URL = "https://studio.genlayer.com/api"
+FRONTEND_ORIGIN = "http://localhost:3000"
+
+[triggers]
+crons = ["* * * * *"]
+
+[[queues.producers]]
+binding = "WEBHOOK_RETRY_QUEUE"
+queue = "disputr-webhook-retry"
+
+[[queues.consumers]]
+queue = "disputr-webhook-retry"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 5
+dead_letter_queue = "disputr-webhook-dlq"
