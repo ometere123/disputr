@@ -8,7 +8,6 @@ import { ContractStatus } from "@/components/contract-status";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { contractStatus } from "@/config/genlayer";
 import { openDisputeOnChain } from "@/lib/genlayer-client";
 import { cn } from "@/lib/utils";
@@ -37,7 +36,6 @@ export function DisputeForm() {
   const [respondent, setRespondent] = React.useState("");
   const [scopeCid, setScopeCid] = React.useState("");
   const [claimantCid, setClaimantCid] = React.useState("");
-  const [notes, setNotes] = React.useState("");
   const [stake, setStake] = React.useState("0.01");
   const [status, setStatus] = React.useState("");
   const [error, setError] = React.useState("");
@@ -136,10 +134,8 @@ export function DisputeForm() {
           {step === 1 ? (
             <EvidenceStep
               claimantCid={claimantCid}
-              notes={notes}
               scopeCid={scopeCid}
               onClaimantCidChange={setClaimantCid}
-              onNotesChange={setNotes}
               onScopeCidChange={setScopeCid}
             />
           ) : null}
@@ -177,7 +173,7 @@ export function DisputeForm() {
             <h3 className="font-bold">Arbitration Fees</h3>
             <p className="mt-2 leading-7 text-[#6d5134]">
               Opening a dispute sends the native stake to the deployed Disputr contract. The contract stores the claimant,
-              respondent, evidence CID, optional scope CID, response window, and appeal window on-chain.
+              respondent, claimant evidence CID, optional scope CID, response window, and appeal window on-chain.
             </p>
             <div className="mt-4">
               <ContractStatus />
@@ -221,17 +217,13 @@ function DetailsStep({
 
 function EvidenceStep({
   claimantCid,
-  notes,
   scopeCid,
   onClaimantCidChange,
-  onNotesChange,
   onScopeCidChange
 }: {
   claimantCid: string;
-  notes: string;
   scopeCid: string;
   onClaimantCidChange: (value: string) => void;
-  onNotesChange: (value: string) => void;
   onScopeCidChange: (value: string) => void;
 }) {
   return (
@@ -256,13 +248,10 @@ function EvidenceStep({
       </section>
       <div className="rounded-xl border border-dashed border-border bg-[#ead9ca] p-10 text-center">
         <FileUp className="mx-auto size-10 text-primary" />
-        <p className="mt-4 font-semibold text-muted-foreground">Upload evidence to IPFS, then paste the returned CID here</p>
+        <p className="mt-4 font-semibold text-muted-foreground">
+          Upload evidence to IPFS, then pass only the returned CID to open_dispute
+        </p>
       </div>
-      <Textarea
-        placeholder="Evidence notes, deliverables, timestamps, communication references..."
-        value={notes}
-        onChange={(event) => onNotesChange(event.target.value)}
-      />
     </div>
   );
 }
@@ -281,7 +270,7 @@ function StakeStep({ stake, onStakeChange }: { stake: string; onStakeChange: (va
           <div className="rounded-xl border border-border bg-card p-5">
             <p className="text-sm font-semibold uppercase text-muted-foreground">Appeal Window</p>
             <p className="mt-3 text-3xl font-extrabold text-primary">72h</p>
-            <p className="mt-2 text-sm text-muted-foreground">Current deployed contract default from get_windows.</p>
+            <p className="mt-2 text-sm text-muted-foreground">The deployed contract defaults to 72h unless the owner updates set_windows.</p>
           </div>
         </div>
       </section>

@@ -16,7 +16,7 @@ const createDisputeSchema = z.object({
   respondent: addressSchema,
   evidence_bundle_hash: cidSchema,
   scope_doc_hash: cidSchema.optional(),
-  stake_eth: z.string().regex(/^\d+(\.\d{1,8})?$/).default("0")
+  stake_gen: z.string().regex(/^\d+(\.\d{1,18})?$/).default("0")
 });
 
 const responseSchema = z.object({
@@ -47,7 +47,7 @@ export const disputeRoutes = new Hono<AppEnv>()
       respondent: body.respondent,
       claimantCid: body.evidence_bundle_hash,
       scopeDocHash: body.scope_doc_hash,
-      stakeEth: body.stake_eth,
+      stakeGen: body.stake_gen,
       appealWindowExpires: appealWindow,
       status: "pending_response"
     });

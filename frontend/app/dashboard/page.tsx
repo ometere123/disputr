@@ -29,9 +29,9 @@ export default function DashboardPage() {
           }
         />
         <div className="mt-10 grid grid-cols-2 gap-4 md:hidden">
-          <MobileMetric label="Staked" value="12,450" unit="PNK" icon={<WalletCards className="size-5" />} />
+          <MobileMetric label="Staked" value="12,450" unit="GEN" icon={<WalletCards className="size-5" />} />
           <MobileMetric label="Active Cases" value="3" icon={<Gavel className="size-5" />} />
-          <MobileMetric label="Rewards Earned" value="1.24" unit="ETH" icon={<Trophy className="size-5" />} wide />
+          <MobileMetric label="Rewards Earned" value="1.24" unit="GEN" icon={<Trophy className="size-5" />} wide />
         </div>
         <div className="mt-16 hidden gap-6 md:grid md:grid-cols-3">
           {dashboardMetrics.map((metric) => (

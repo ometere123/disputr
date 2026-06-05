@@ -46,7 +46,7 @@ export const disputes = pgTable(
     respondentCid: text("respondent_cid"),
     scopeDocHash: text("scope_doc_hash"),
     status: text("status").notNull().default("pending_response"),
-    stakeEth: numeric("stake_eth", { precision: 24, scale: 8 }).notNull().default("0"),
+    stakeGen: numeric("stake_gen", { precision: 38, scale: 18 }).notNull().default("0"),
     onChainDisputeId: text("on_chain_dispute_id"),
     onChainTx: text("on_chain_tx"),
     appealWindowExpires: timestamp("appeal_window_expires", { withTimezone: true }),
@@ -97,7 +97,7 @@ export const appeals = pgTable(
       .notNull()
       .references(() => disputes.id, { onDelete: "cascade" }),
     appellant: text("appellant").notNull(),
-    stakeEth: numeric("stake_eth", { precision: 24, scale: 8 }).notNull(),
+    stakeGen: numeric("stake_gen", { precision: 38, scale: 18 }).notNull(),
     appealCid: text("appeal_cid").notNull(),
     status: text("status").notNull().default("pending"),
     finalVerdictId: text("final_verdict_id").references(() => verdicts.id),

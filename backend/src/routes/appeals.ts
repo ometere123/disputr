@@ -10,7 +10,7 @@ const appealSchema = z.object({
   dispute_id: z.string().min(4),
   appellant: z.string().regex(/^0x[a-fA-F0-9]{40}$/),
   appeal_cid: z.string().min(10).max(128),
-  stake_eth: z.string().regex(/^\d+(\.\d{1,8})?$/)
+  stake_gen: z.string().regex(/^\d+(\.\d{1,18})?$/)
 });
 
 export const appealRoutes = new Hono<AppEnv>().post("/v1/appeal", requireApiKey("write:disputes"), async (c) => {
@@ -35,7 +35,7 @@ export const appealRoutes = new Hono<AppEnv>().post("/v1/appeal", requireApiKey(
     disputeId: body.dispute_id,
     appellant: body.appellant,
     appealCid: body.appeal_cid,
-    stakeEth: body.stake_eth,
+    stakeGen: body.stake_gen,
     status: "pending"
   });
   await db.update(disputes).set({ status: "appealed", updatedAt: new Date() }).where(eq(disputes.id, body.dispute_id));

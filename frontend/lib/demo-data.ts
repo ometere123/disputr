@@ -2,7 +2,7 @@ export const dashboardMetrics = [
   {
     label: "Total Volume Arbitrated",
     value: "14.2M",
-    unit: "PNK",
+    unit: "GEN",
     trend: "+12% this month",
     icon: "wallet"
   },
@@ -37,7 +37,7 @@ export const activeDisputes = [
   {
     id: "#1041",
     title: "NFT Marketplace Royalty Dispute",
-    amount: "12.5 ETH",
+    amount: "12.5 GEN",
     status: "Evaluating",
     action: "Details",
     category: "Marketplace",

@@ -86,7 +86,7 @@ export function AppShell({
               href="/pricing"
               className="mb-6 flex h-12 items-center justify-center rounded-full border border-primary bg-card text-base font-semibold text-primary"
             >
-              Stake PNK
+              Stake GEN
             </Link>
             <div className="flex items-center justify-around text-sm text-muted-foreground">
               <Link href="/developers/api-docs" className="flex flex-col items-center gap-2">

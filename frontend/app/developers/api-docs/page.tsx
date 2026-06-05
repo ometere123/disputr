@@ -5,10 +5,10 @@ import { Card } from "@/components/ui/card";
 import { DISPUTR_API_URL } from "@/config/app";
 
 const endpoints = [
-  ["POST", "/v1/dispute", "write:disputes", "Open a new dispute with parties, evidence CID, optional scope CID, and stake."],
+  ["POST", "/v1/dispute", "write:disputes", "Open a new dispute with parties, evidence CID, optional scope CID, and native GEN stake."],
   ["GET", "/v1/dispute/:id", "read:verdicts", "Fetch dispute status, evidence hashes, and verdict data."],
   ["GET", "/v1/verdict/:id", "read:verdicts", "Read structured verdict, reasoning trace, confidence, and evidence weights."],
-  ["POST", "/v1/appeal", "write:disputes", "Submit an appeal with stake and appeal evidence CID."],
+  ["POST", "/v1/appeal", "write:disputes", "Submit an appeal with native GEN stake and appeal evidence CID."],
   ["GET", "/v1/credentials/:address", "read:credentials", "List soulbound case credentials for a wallet."],
   ["POST", "/v1/webhooks", "write:webhooks", "Register an HTTPS endpoint for verdict.delivered events."]
 ];
