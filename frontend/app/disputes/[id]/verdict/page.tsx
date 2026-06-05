@@ -1,8 +1,6 @@
-import { Download } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { PageHeading } from "@/components/page-heading";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { VerdictPanel } from "@/components/verdict-panel";
 
 export default async function VerdictPage({ params }: { params: Promise<{ id: string }> }) {
@@ -10,24 +8,18 @@ export default async function VerdictPage({ params }: { params: Promise<{ id: st
 
   return (
     <AppShell active="Case History">
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-12 md:py-14">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           eyebrow={
             <div className="flex items-center gap-3">
-              <Badge variant="success">Verdict Delivered</Badge>
+              <Badge variant="warning">Verdict Pending</Badge>
               <span className="text-muted-foreground">Case #{id}</span>
             </div>
           }
-          title="Freelance Contract Dispute"
-          description="Arbitration finalized. Funds can be distributed by the integrated escrow protocol after finality."
-          action={
-            <Button variant="outline">
-              <Download className="size-5" />
-              Export Report
-            </Button>
-          }
+          title={`Dispute #${id} Verdict`}
+          description="Structured verdict data will appear after GenLayer evaluation has committed the result on-chain."
         />
-        <div className="mt-20">
+        <div className="mt-8">
           <VerdictPanel />
         </div>
       </div>

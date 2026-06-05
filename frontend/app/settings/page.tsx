@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 export default function SettingsPage() {
   return (
     <AppShell active="Dashboard">
-      <div className="mx-auto max-w-5xl px-5 py-10 md:px-12 md:py-14">
+      <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading title="Settings" description="Manage account preferences, notifications, and protocol configuration." />
-        <div className="mt-12 space-y-6">
-          <Card className="p-8">
+        <div className="mt-8 space-y-5">
+          <Card className="p-6">
             <div className="flex items-center gap-4">
-              <UserRound className="size-7 text-primary" />
+              <UserRound className="size-6 text-primary" />
               <h2 className="text-2xl font-extrabold">Account</h2>
             </div>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
@@ -22,18 +22,18 @@ export default function SettingsPage() {
               <Input placeholder="Email address" />
             </div>
           </Card>
-          <Card className="p-8">
+          <Card className="p-6">
             <div className="flex items-center gap-4">
-              <Shield className="size-7 text-primary" />
+              <Shield className="size-6 text-primary" />
               <h2 className="text-2xl font-extrabold">Contract Configuration</h2>
             </div>
             <div className="mt-5">
               <ContractStatus />
             </div>
           </Card>
-          <Card className="p-8">
+          <Card className="p-6">
             <div className="flex items-center gap-4">
-              <Bell className="size-7 text-primary" />
+              <Bell className="size-6 text-primary" />
               <h2 className="text-2xl font-extrabold">Notifications</h2>
             </div>
             <p className="mt-4 text-muted-foreground">Receive updates for response windows, verdict delivery, and appeal status.</p>

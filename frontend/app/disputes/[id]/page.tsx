@@ -12,11 +12,11 @@ export default async function DisputeDetailPage({ params }: { params: Promise<{ 
 
   return (
     <AppShell active="Active Disputes">
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-12 md:py-14">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
-          eyebrow={<Badge variant="warning">Evidence Phase</Badge>}
-          title="Freelance Contract Dispute"
-          description={`Case ${id}. Evidence response window is open and the GenLayer evaluation will unlock after counter-evidence is submitted or the window expires.`}
+          eyebrow={<Badge variant="warning">Contract Case</Badge>}
+          title={`Dispute #${id}`}
+          description="Contract and database records for this dispute will appear here once the case has been opened and indexed."
           action={
             <Button asChild>
               <Link href={`/disputes/${id}/respond`}>
@@ -26,33 +26,22 @@ export default async function DisputeDetailPage({ params }: { params: Promise<{ 
           }
         />
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.5fr_0.8fr]">
-          <Card className="p-8">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_0.8fr]">
+          <Card className="p-6">
             <div className="flex items-center gap-4">
               <div className="rounded-full bg-[#ead1c2] p-4 text-primary">
-                <FileText className="size-7" />
+                <FileText className="size-6" />
               </div>
               <div>
                 <h2 className="text-2xl font-extrabold">Evidence Timeline</h2>
-                <p className="text-muted-foreground">Claimant evidence, scope CID, response window, and evaluation readiness.</p>
+                <p className="text-muted-foreground">Evidence CIDs and response status from the contract/indexer.</p>
               </div>
             </div>
-            <div className="mt-8 space-y-6">
-              {[
-                ["Scope document captured", "Scope CID stored and ready for contract prompt context."],
-                ["Claimant bundle uploaded", "Deliverables, timestamps, and screenshots are represented by immutable CIDs."],
-                ["Respondent evidence pending", "Counter-evidence can be submitted before the response window closes."]
-              ].map(([title, body], index) => (
-                <div key={title} className="flex gap-4">
-                  <span className="mt-1 flex size-7 items-center justify-center rounded-full border-2 border-primary text-xs font-bold">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-bold text-primary">{title}</h3>
-                    <p className="mt-1 text-muted-foreground">{body}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="mt-6 rounded-xl border border-dashed border-border bg-[#fff4eb] p-6">
+              <p className="font-bold text-primary">No indexed evidence timeline yet</p>
+              <p className="mt-2 text-muted-foreground">
+                Claimant evidence, respondent evidence, scope CID, and evaluation readiness will populate this section after real records are available.
+              </p>
             </div>
           </Card>
 
@@ -62,8 +51,8 @@ export default async function DisputeDetailPage({ params }: { params: Promise<{ 
                 <Clock className="size-6 text-primary" />
                 <h2 className="text-2xl font-extrabold">Response Window</h2>
               </div>
-              <p className="mt-6 text-5xl font-extrabold text-primary">2d 10h</p>
-              <p className="mt-2 text-muted-foreground">Default 72 hour window before evaluation can proceed.</p>
+              <p className="mt-6 text-3xl font-extrabold text-primary">Not indexed</p>
+              <p className="mt-2 text-muted-foreground">The contract response deadline will appear here after this dispute is read from chain.</p>
             </Card>
             <Card className="p-6">
               <div className="flex items-center gap-3">

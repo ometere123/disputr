@@ -110,8 +110,8 @@ export function DisputeForm() {
   }
 
   return (
-    <div className="space-y-8">
-      <Card className="p-8 md:p-10">
+    <div className="space-y-6">
+      <Card className="p-6 md:p-8">
         <div className="grid grid-cols-3 gap-4 text-sm md:text-base">
           {steps.map((label, index) => (
             <button
@@ -129,7 +129,7 @@ export function DisputeForm() {
           ))}
         </div>
 
-        <div className="mt-10">
+        <div className="mt-8">
           {step === 0 ? <DetailsStep claimant={address ?? ""} respondent={respondent} onRespondentChange={setRespondent} /> : null}
           {step === 1 ? (
             <EvidenceStep
@@ -149,7 +149,7 @@ export function DisputeForm() {
           </p>
         ) : null}
 
-        <div className="mt-10 flex flex-col-reverse gap-4 border-t border-border pt-8 sm:flex-row sm:justify-end">
+        <div className="mt-8 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0 || isSubmitting}>
             Cancel
           </Button>
@@ -166,7 +166,7 @@ export function DisputeForm() {
         </div>
       </Card>
 
-      <div className="rounded-[18px] border border-[#ecdca7] bg-[#fbefd6] p-6 text-primary">
+      <div className="rounded-[18px] border border-[#ecdca7] bg-[#fbefd6] p-5 text-primary">
         <div className="flex gap-4">
           <Info className="mt-1 size-6 shrink-0" />
           <div>
@@ -195,9 +195,9 @@ function DetailsStep({
   onRespondentChange: (value: string) => void;
 }) {
   return (
-    <div className="space-y-9">
+    <div className="space-y-7">
       <section>
-        <h2 className="border-b border-border pb-4 text-2xl font-extrabold">Involved Parties</h2>
+        <h2 className="border-b border-border pb-3 text-xl font-extrabold">Involved Parties</h2>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <label>
             <span className="font-semibold text-muted-foreground">Claimant Wallet *</span>
@@ -227,9 +227,9 @@ function EvidenceStep({
   onScopeCidChange: (value: string) => void;
 }) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section>
-        <h2 className="border-b border-border pb-4 text-2xl font-extrabold">Evidence Bundle</h2>
+        <h2 className="border-b border-border pb-3 text-xl font-extrabold">Evidence Bundle</h2>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <label>
             <span className="font-semibold text-muted-foreground">Scope Document CID</span>
@@ -246,7 +246,7 @@ function EvidenceStep({
           </label>
         </div>
       </section>
-      <div className="rounded-xl border border-dashed border-border bg-[#ead9ca] p-10 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-[#ead9ca] p-8 text-center">
         <FileUp className="mx-auto size-10 text-primary" />
         <p className="mt-4 font-semibold text-muted-foreground">
           Upload evidence to IPFS, then pass only the returned CID to open_dispute
@@ -258,9 +258,9 @@ function EvidenceStep({
 
 function StakeStep({ stake, onStakeChange }: { stake: string; onStakeChange: (value: string) => void }) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section>
-        <h2 className="border-b border-border pb-4 text-2xl font-extrabold">Stake</h2>
+        <h2 className="border-b border-border pb-3 text-xl font-extrabold">Stake</h2>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <label>
             <span className="font-semibold text-muted-foreground">Native GEN Stake *</span>
@@ -269,7 +269,7 @@ function StakeStep({ stake, onStakeChange }: { stake: string; onStakeChange: (va
           </label>
           <div className="rounded-xl border border-border bg-card p-5">
             <p className="text-sm font-semibold uppercase text-muted-foreground">Appeal Window</p>
-            <p className="mt-3 text-3xl font-extrabold text-primary">72h</p>
+            <p className="mt-3 text-2xl font-extrabold text-primary">72h</p>
             <p className="mt-2 text-sm text-muted-foreground">The deployed contract defaults to 72h unless the owner updates set_windows.</p>
           </div>
         </div>

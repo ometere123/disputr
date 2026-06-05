@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 export default function DisputesPage() {
   return (
     <AppShell active="Active Disputes">
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-12 md:py-14">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           title="Active Disputes"
           description="Track response windows, evidence status, evaluation progress, and final verdicts."
@@ -22,14 +22,14 @@ export default function DisputesPage() {
             </Button>
           }
         />
-        <div className="mt-12 hidden md:block">
+        <div className="mt-8 hidden md:block">
           <DisputeTable />
         </div>
-        <div className="mt-12 md:hidden">
+        <div className="mt-8 md:hidden">
           <EmptyState
-            title="Use desktop table view"
-            description="Your active disputes remain available on mobile through the dashboard action cards."
-            action={{ href: "/dashboard", label: "Back to Dashboard" }}
+            title="No active disputes"
+            description="Contract or database-backed disputes will appear here once they are created."
+            action={{ href: "/disputes/new", label: "Open New Dispute" }}
           />
         </div>
       </div>

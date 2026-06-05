@@ -23,18 +23,18 @@ export function MetricCard({
   const Icon = iconMap[icon];
 
   return (
-    <Card className="min-h-44 p-7">
+    <Card className="min-h-36 p-6">
       <div className="flex items-start justify-between gap-4">
-        <p className="max-w-[13rem] text-base font-semibold uppercase tracking-normal text-muted-foreground">{label}</p>
-        <div className="rounded-xl bg-[#ead2c2] p-3 text-primary">
-          <Icon className="size-6" />
+        <p className="max-w-[12rem] text-sm font-semibold uppercase tracking-normal text-muted-foreground">{label}</p>
+        <div className="rounded-lg bg-[#ead2c2] p-2.5 text-primary">
+          <Icon className="size-5" />
         </div>
       </div>
-      <div className="mt-10 flex items-end gap-3">
-        <span className="text-5xl font-extrabold text-primary">{value}</span>
-        {unit ? <span className="pb-2 text-xl font-semibold text-muted-foreground">{unit}</span> : null}
+      <div className="mt-6 flex items-end gap-2">
+        <span className="text-4xl font-extrabold text-primary">{value}</span>
+        {unit ? <span className="pb-1.5 text-base font-semibold text-muted-foreground">{unit}</span> : null}
       </div>
-      <p className="mt-4 text-sm font-semibold text-[#176d44]">{trend}</p>
+      <p className="mt-3 text-sm font-semibold text-muted-foreground">{trend}</p>
     </Card>
   );
 }

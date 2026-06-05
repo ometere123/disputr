@@ -70,8 +70,8 @@ export function RespondEvidenceForm({ disputeId }: { disputeId: string }) {
   }
 
   return (
-    <Card className="mt-12 p-8">
-      <div className="mb-8">
+    <Card className="mt-8 p-6">
+      <div className="mb-6">
         <ContractStatus />
       </div>
       <label>
@@ -79,7 +79,7 @@ export function RespondEvidenceForm({ disputeId }: { disputeId: string }) {
         <Input className="mt-3" placeholder="bafy..." value={respondentCid} onChange={(event) => setRespondentCid(event.target.value)} />
         <span className="mt-2 block text-sm text-muted-foreground">Passed directly to submit_response as respondent_cid.</span>
       </label>
-      <div className="mt-8 rounded-xl border border-dashed border-border bg-[#ead9ca] p-12 text-center">
+      <div className="mt-6 rounded-xl border border-dashed border-border bg-[#ead9ca] p-8 text-center">
         <UploadCloud className="mx-auto size-10 text-primary" />
         <p className="mt-4 font-semibold text-muted-foreground">Upload counter-evidence to IPFS, then paste the returned CID here</p>
       </div>
@@ -89,7 +89,7 @@ export function RespondEvidenceForm({ disputeId }: { disputeId: string }) {
           Response transaction submitted: {status}
         </p>
       ) : null}
-      <div className="mt-8 flex justify-end">
+      <div className="mt-6 flex justify-end">
         <Button disabled={!canSubmit} onClick={() => void handleSubmit()}>
           {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : null}
           Submit Response

@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Grid2X2 },
   { label: "Active Disputes", href: "/disputes", icon: Gavel },
-  { label: "Case History", href: "/disputes/90210/verdict", icon: History },
+  { label: "Case History", href: "/disputes", icon: History },
   { label: "Juror Pool", href: "/credentials", icon: UsersRound },
   { label: "Governance", href: "/developers", icon: Landmark }
 ];
@@ -35,20 +35,20 @@ export function AppShell({
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-border/70 bg-[#fffaf5]/90 backdrop-blur">
-        <div className="flex h-[82px] items-center gap-6 px-5 md:px-8">
-          <Link href="/" className="mr-auto text-3xl font-extrabold tracking-normal text-primary md:w-64">
+        <div className="flex h-16 items-center gap-5 px-4 md:px-7">
+          <Link href="/" className="mr-auto text-2xl font-extrabold tracking-normal text-primary md:w-56">
             Disputr
           </Link>
-          <div className="hidden w-full max-w-md items-center gap-3 rounded-full border border-border bg-card px-4 py-3 text-muted-foreground md:flex">
+          <div className="hidden h-11 w-full max-w-md items-center gap-3 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground md:flex">
             <Search className="size-5" />
             <span>{searchPlaceholder}</span>
           </div>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-3">
             <button aria-label="Notifications" className="hidden rounded-full p-2 text-primary hover:bg-muted md:inline-flex">
-              <Bell className="size-6" />
+              <Bell className="size-5" />
             </button>
             <Link aria-label="Settings" href="/settings" className="hidden rounded-full p-2 text-primary hover:bg-muted md:inline-flex">
-              <Settings className="size-6" />
+              <Settings className="size-5" />
             </Link>
             <WalletConnect />
           </div>
@@ -56,12 +56,12 @@ export function AppShell({
       </header>
 
       <div className="flex">
-        <aside className="fixed bottom-0 left-0 top-[82px] hidden w-80 flex-col border-r border-border/70 bg-[#fff6ee]/80 p-6 md:flex">
+        <aside className="fixed bottom-0 left-0 top-16 hidden w-72 flex-col border-r border-border/70 bg-[#fff6ee]/80 p-5 md:flex">
           <div>
-            <h2 className="text-2xl font-bold text-primary">Protocol Menu</h2>
-            <p className="mt-2 text-muted-foreground">Arbitration Interface</p>
+            <h2 className="text-xl font-bold text-primary">Protocol Menu</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Arbitration Interface</p>
           </div>
-          <nav className="mt-12 space-y-3">
+          <nav className="mt-8 space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const selected = item.label === active;
@@ -70,21 +70,21 @@ export function AppShell({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-4 rounded-xl px-5 py-4 text-lg font-semibold text-muted-foreground transition-colors",
+                    "flex items-center gap-4 rounded-xl px-4 py-3 text-base font-semibold text-muted-foreground transition-colors",
                     selected && "bg-[#ff9d5b] text-primary shadow-sm",
                     !selected && "hover:bg-muted"
                   )}
                 >
-                  <Icon className="size-6" />
+                  <Icon className="size-5" />
                   {item.label}
                 </Link>
               );
             })}
           </nav>
-          <div className="mt-auto border-t border-border pt-6">
+          <div className="mt-auto border-t border-border pt-5">
             <Link
               href="/pricing"
-              className="mb-6 flex h-12 items-center justify-center rounded-full border border-primary bg-card text-base font-semibold text-primary"
+              className="mb-5 flex h-11 items-center justify-center rounded-full border border-primary bg-card text-sm font-semibold text-primary"
             >
               Stake GEN
             </Link>
@@ -101,7 +101,7 @@ export function AppShell({
           </div>
         </aside>
 
-        <main className="w-full pb-28 md:ml-80 md:pb-12">{children}</main>
+        <main className="w-full pb-28 md:ml-72 md:pb-10">{children}</main>
       </div>
 
       <nav className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-4 rounded-t-2xl border border-border bg-[#fffaf5] px-5 py-3 shadow-soft md:hidden">

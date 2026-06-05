@@ -16,16 +16,16 @@ const endpoints = [
 export default function ApiDocsPage() {
   return (
     <AppShell active="Governance">
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-12 md:py-14">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           title="API Documentation"
           description="B2B arbitration endpoints for escrow protocols, freelance marketplaces, bounty platforms, and NFT commission tools."
         />
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_0.8fr]">
-          <Card className="p-8">
-            <h2 className="text-3xl font-extrabold text-primary">Core Endpoints</h2>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
+          <Card className="p-6">
+            <h2 className="text-2xl font-extrabold text-primary">Core Endpoints</h2>
             <p className="mt-3 font-mono text-sm text-muted-foreground">{DISPUTR_API_URL}</p>
-            <div className="mt-8 space-y-5">
+            <div className="mt-6 space-y-4">
               {endpoints.map(([method, path, scope, description]) => (
                 <div key={path} className="rounded-xl border border-border bg-card p-5">
                   <div className="flex flex-wrap items-center gap-3">
@@ -38,22 +38,22 @@ export default function ApiDocsPage() {
               ))}
             </div>
           </Card>
-          <Card className="p-8">
-            <h2 className="text-3xl font-extrabold text-primary">Webhook Security</h2>
+          <Card className="p-6">
+            <h2 className="text-2xl font-extrabold text-primary">Webhook Security</h2>
             <p className="mt-4 leading-7 text-muted-foreground">
               Disputr signs every webhook with HMAC-SHA256 over timestamp and body. Store the `whsec_` secret when it is
               created and reject stale timestamps to prevent replay.
             </p>
             <pre className="mt-8 overflow-x-auto rounded-xl bg-[#2a160f] p-5 text-sm text-[#f8eadf]">
-{`Disputr-Timestamp: 1717420000
+{`Disputr-Timestamp: <unix_timestamp>
 Disputr-Signature: v1=...
 
 {
   "event": "verdict.delivered",
-  "dispute_id": "dsp_1234",
-  "verdict": "claimant",
-  "confidence": 0.91,
-  "release_to": "0xbuyer..."
+  "dispute_id": "<database_or_contract_id>",
+  "verdict": "<claimant|respondent|split>",
+  "confidence": "<0.00-1.00>",
+  "release_to": "<wallet_address>"
 }`}
             </pre>
           </Card>

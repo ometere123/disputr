@@ -86,8 +86,8 @@ export function AppealForm({ disputeId }: { disputeId: string }) {
   }
 
   return (
-    <Card className="mt-12 p-8">
-      <div className="mb-8">
+    <Card className="mt-8 p-6">
+      <div className="mb-6">
         <ContractStatus />
       </div>
       <div className="grid gap-6 md:grid-cols-2">
@@ -108,7 +108,7 @@ export function AppealForm({ disputeId }: { disputeId: string }) {
           Appeal transaction submitted: {status}
         </p>
       ) : null}
-      <div className="mt-8 flex justify-end">
+      <div className="mt-6 flex justify-end">
         <Button disabled={!canSubmit} onClick={() => void handleSubmit()}>
           {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : <ShieldAlert className="size-5" />}
           Submit Appeal

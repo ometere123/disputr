@@ -9,12 +9,35 @@ import { MobileActionCards } from "@/components/mobile-action-card";
 import { PageHeading } from "@/components/page-heading";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { dashboardMetrics } from "@/lib/demo-data";
+
+const dashboardMetrics = [
+  {
+    label: "Total Volume Arbitrated",
+    value: "0",
+    unit: "GEN",
+    trend: "No database records yet",
+    icon: "wallet" as const
+  },
+  {
+    label: "Active Disputes",
+    value: "0",
+    unit: "",
+    trend: "No contract-indexed disputes",
+    icon: "gavel" as const
+  },
+  {
+    label: "Recent Verdicts",
+    value: "0",
+    unit: "",
+    trend: "No verdicts delivered yet",
+    icon: "check" as const
+  }
+];
 
 export default function DashboardPage() {
   return (
     <AppShell active="Dashboard">
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-12 md:py-14">
+      <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           eyebrow={<ContractStatus />}
           title="Dashboard"
@@ -28,19 +51,19 @@ export default function DashboardPage() {
             </Button>
           }
         />
-        <div className="mt-10 grid grid-cols-2 gap-4 md:hidden">
-          <MobileMetric label="Staked" value="12,450" unit="GEN" icon={<WalletCards className="size-5" />} />
-          <MobileMetric label="Active Cases" value="3" icon={<Gavel className="size-5" />} />
-          <MobileMetric label="Rewards Earned" value="1.24" unit="GEN" icon={<Trophy className="size-5" />} wide />
+        <div className="mt-8 grid grid-cols-2 gap-4 md:hidden">
+          <MobileMetric label="Staked" value="0" unit="GEN" icon={<WalletCards className="size-5" />} />
+          <MobileMetric label="Active Cases" value="0" icon={<Gavel className="size-5" />} />
+          <MobileMetric label="Rewards Earned" value="0" unit="GEN" icon={<Trophy className="size-5" />} wide />
         </div>
-        <div className="mt-16 hidden gap-6 md:grid md:grid-cols-3">
+        <div className="mt-10 hidden gap-5 md:grid md:grid-cols-3">
           {dashboardMetrics.map((metric) => (
-            <MetricCard key={metric.label} {...metric} icon={metric.icon as "wallet" | "gavel" | "check"} />
+            <MetricCard key={metric.label} {...metric} />
           ))}
         </div>
-        <section className="mt-20 hidden md:block">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-3xl font-extrabold text-primary">Active Disputes</h2>
+        <section className="mt-12 hidden md:block">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-2xl font-extrabold text-primary">Active Disputes</h2>
             <Link href="/disputes" className="font-semibold text-primary">
               View All
             </Link>
