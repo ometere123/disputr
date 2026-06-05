@@ -13,6 +13,11 @@
     "env:check": "tsx scripts/env_check.ts",
     "seed": "tsx scripts/seed.ts"
   },
+  "dependencies": {
+    "next": "^15.5.19",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
   "devDependencies": {
     "@types/node": "^20.17.10",
     "tsx": "^4.19.2",
