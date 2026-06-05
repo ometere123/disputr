@@ -4,7 +4,7 @@ import { PageHeading } from "@/components/page-heading";
 
 export default function NewDisputePage() {
   return (
-    <AppShell active="Active Disputes" searchPlaceholder="Search...">
+    <AppShell active="Disputes" searchPlaceholder="Search...">
       <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           title="Open a Dispute"

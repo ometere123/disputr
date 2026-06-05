@@ -6,7 +6,7 @@ export default async function RespondPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
 
   return (
-    <AppShell active="Active Disputes">
+    <AppShell active="Disputes">
       <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           title="Submit Counter-Evidence"

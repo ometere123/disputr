@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 
 export default function SettingsPage() {
   return (
-    <AppShell active="Dashboard">
+    <AppShell active="Settings">
       <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading title="Settings" description="Manage account preferences, notifications, and protocol configuration." />
         <div className="mt-8 space-y-5">

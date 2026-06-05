@@ -11,7 +11,7 @@ export default async function DisputeDetailPage({ params }: { params: Promise<{ 
   const { id } = await params;
 
   return (
-    <AppShell active="Active Disputes">
+    <AppShell active="Disputes">
       <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           eyebrow={<Badge variant="warning">Contract Case</Badge>}

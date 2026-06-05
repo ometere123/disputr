@@ -6,15 +6,15 @@ import { Button } from "@/components/ui/button";
 
 export default function DevelopersPage() {
   return (
-    <AppShell active="Governance" searchPlaceholder="Search...">
+    <AppShell active="Developers" searchPlaceholder="Search...">
       <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
-          title="Developer Settings"
+          title="Developers"
           description="Manage your API keys, webhook endpoints, and integration preferences."
           action={
-            <Button size="lg">
+            <Button size="lg" disabled>
               <Plus className="size-5" />
-              Generate New Key
+              Create API Key
             </Button>
           }
         />

@@ -15,7 +15,7 @@ const endpoints = [
 
 export default function ApiDocsPage() {
   return (
-    <AppShell active="Governance">
+    <AppShell active="Developers">
       <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
           title="API Documentation"

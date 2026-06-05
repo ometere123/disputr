@@ -1,14 +1,13 @@
 import {
   Bell,
+  BadgeCheck,
   BookOpen,
+  Code2,
   Gavel,
   Grid2X2,
   HelpCircle,
-  History,
-  Landmark,
   Search,
-  Settings,
-  UsersRound
+  Settings
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -17,10 +16,10 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Grid2X2 },
-  { label: "Active Disputes", href: "/disputes", icon: Gavel },
-  { label: "Case History", href: "/disputes", icon: History },
-  { label: "Juror Pool", href: "/credentials", icon: UsersRound },
-  { label: "Governance", href: "/developers", icon: Landmark }
+  { label: "Disputes", href: "/disputes", icon: Gavel },
+  { label: "Credentials", href: "/credentials", icon: BadgeCheck },
+  { label: "Developers", href: "/developers", icon: Code2 },
+  { label: "Settings", href: "/settings", icon: Settings }
 ];
 
 export function AppShell({
@@ -58,8 +57,8 @@ export function AppShell({
       <div className="flex">
         <aside className="fixed bottom-0 left-0 top-16 hidden w-72 flex-col border-r border-border/70 bg-[#fff6ee]/80 p-5 md:flex">
           <div>
-            <h2 className="text-xl font-bold text-primary">Protocol Menu</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Arbitration Interface</p>
+            <h2 className="text-xl font-bold text-primary">Disputr Console</h2>
+            <p className="mt-1 text-sm text-muted-foreground">On-chain arbitration</p>
           </div>
           <nav className="mt-8 space-y-2">
             {navItems.map((item) => {
@@ -84,9 +83,12 @@ export function AppShell({
           <div className="mt-auto border-t border-border pt-5">
             <Link
               href="/pricing"
-              className="mb-5 flex h-11 items-center justify-center rounded-full border border-primary bg-card text-sm font-semibold text-primary"
+              className={cn(
+                "mb-5 flex h-11 items-center justify-center rounded-full border border-primary text-sm font-semibold text-primary",
+                active === "Pricing" ? "bg-[#ff9d5b]" : "bg-card"
+              )}
             >
-              Stake GEN
+              Pricing
             </Link>
             <div className="flex items-center justify-around text-sm text-muted-foreground">
               <Link href="/developers/api-docs" className="flex flex-col items-center gap-2">
@@ -95,7 +97,7 @@ export function AppShell({
               </Link>
               <Link href="/settings" className="flex flex-col items-center gap-2">
                 <HelpCircle className="size-5" />
-                Support
+                Settings
               </Link>
             </div>
           </div>
@@ -118,7 +120,7 @@ export function AppShell({
               )}
             >
               <Icon className="size-5" />
-              {item.label.replace("Active ", "")}
+              {item.label}
             </Link>
           );
         })}

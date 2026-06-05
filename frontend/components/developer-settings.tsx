@@ -38,7 +38,7 @@ export function DeveloperSettings() {
                   <td colSpan={5} className="py-10 text-center">
                     <p className="font-bold text-primary">No API keys yet</p>
                     <p className="mt-2 text-muted-foreground">
-                      Generated `dk_` keys from the database will appear here once created.
+                      Database-backed API keys will appear here once created.
                     </p>
                   </td>
                 </tr>
@@ -101,8 +101,8 @@ export function DeveloperSettings() {
           </div>
         </label>
         <div className="mt-6 border-t border-border pt-6">
-          <Button className="w-full" variant="outline">
-            Save Configuration
+          <Button className="w-full" variant="outline" disabled>
+            Save Webhook
           </Button>
         </div>
       </Card>

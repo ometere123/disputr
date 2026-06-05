@@ -19,7 +19,7 @@ const dashboardMetrics = [
     icon: "wallet" as const
   },
   {
-    label: "Active Disputes",
+    label: "Open Disputes",
     value: "0",
     unit: "",
     trend: "No contract-indexed disputes",
@@ -63,7 +63,7 @@ export default function DashboardPage() {
         </div>
         <section className="mt-12 hidden md:block">
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-2xl font-extrabold text-primary">Active Disputes</h2>
+            <h2 className="text-2xl font-extrabold text-primary">Disputes</h2>
             <Link href="/disputes" className="font-semibold text-primary">
               View All
             </Link>

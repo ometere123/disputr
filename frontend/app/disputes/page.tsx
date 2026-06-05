@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 
 export default function DisputesPage() {
   return (
-    <AppShell active="Active Disputes">
+    <AppShell active="Disputes">
       <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
         <PageHeading
-          title="Active Disputes"
+          title="Disputes"
           description="Track response windows, evidence status, evaluation progress, and final verdicts."
           action={
             <Button asChild size="lg">
