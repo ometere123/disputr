@@ -4,6 +4,8 @@
 
 Developer keys use a `dk_` prefix. Plaintext is shown once at creation and the backend stores only a SHA-256 hash. Each key carries explicit scopes.
 
+Session-authenticated `/api/me/api-keys` is only used to create and manage a logged-in user's own keys. External API access still requires the `dk_` bearer token on Cloudflare Worker `/v1/*` routes.
+
 ## Evidence Integrity
 
 Raw private evidence is stored off-chain on IPFS through Pinata. Contracts receive CIDs and hashes only.
@@ -19,6 +21,8 @@ Webhook deliveries are signed with HMAC-SHA256 using a per-webhook secret. Times
 ## Frontend
 
 The app separates public env values from server secrets, avoids Node-only APIs in browser components, and uses request origin checks for mutating API route handlers.
+
+Profile settings, notification reads, API keys, webhooks, and user disputes are scoped to the current Auth.js session. Wallet login uses SIWE and stores linked wallets in Supabase.
 
 ## Workers
 

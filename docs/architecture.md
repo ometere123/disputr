@@ -9,6 +9,15 @@ Disputr is a monorepo with a Vercel frontend, Cloudflare Workers Hono API, share
 - `packages/db`: Drizzle ORM Postgres schema and Supabase Postgres client configuration using the Worker-compatible `postgres` driver with prepared statements disabled for pooler compatibility.
 - `intelligent-contracts`: GenLayer Python contracts for arbitration, soulbound credentials, and appeals.
 
+## Product Surfaces
+
+Disputr has two connected surfaces:
+
+- User app: wallet/SIWE sign-in, profile settings, notifications, dispute filing, response evidence, appeals, verdicts, and credentials.
+- B2B developer platform: `dk_` API keys, scoped `/v1/*` access, webhook registration, HMAC-signed verdict delivery, and delivery retries.
+
+The user app uses session-authenticated Next.js routes under `/api/me/*`. External integrations use the Cloudflare Worker `/v1/*` API with API key authentication.
+
 ## Cloudflare Worker Events
 
 Workers are request/event based, not an always-running VPS. Disputr uses:
@@ -22,6 +31,8 @@ The previous 5-second in-process poller is intentionally replaced with Cloudflar
 ## Database
 
 `DATABASE_URL` points to Supabase Postgres. For Cloudflare Workers, use either a Supabase pooler connection string with prepared statements disabled or a Cloudflare Hyperdrive connection to Supabase Postgres.
+
+Run `packages/db/migrations/0001_account_notifications.sql` before using wallet sign-in, settings, notifications, API keys, or webhooks in production.
 
 ## Contract Configuration
 

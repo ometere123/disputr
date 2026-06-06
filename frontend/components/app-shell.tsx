@@ -1,5 +1,4 @@
 import {
-  Bell,
   BadgeCheck,
   BookOpen,
   Code2,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { NotificationBell } from "@/components/notification-bell";
 import { WalletConnect } from "@/components/wallet-connect";
 import { cn } from "@/lib/utils";
 
@@ -43,9 +43,7 @@ export function AppShell({
             <span>{searchPlaceholder}</span>
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <button aria-label="Notifications" className="hidden rounded-full p-2 text-primary hover:bg-muted md:inline-flex">
-              <Bell className="size-5" />
-            </button>
+            <NotificationBell />
             <Link aria-label="Settings" href="/settings" className="hidden rounded-full p-2 text-primary hover:bg-muted md:inline-flex">
               <Settings className="size-5" />
             </Link>

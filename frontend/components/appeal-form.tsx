@@ -77,7 +77,23 @@ export function AppealForm({ disputeId }: { disputeId: string }) {
         appealCid: appealCid.trim(),
         stakeWei
       });
-      setStatus(resultLabel(result));
+      const txLabel = resultLabel(result);
+      const response = await fetch(`/api/me/disputes/${disputeId}/appeal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          appealCid: appealCid.trim(),
+          stakeGen: stake,
+          onChainTx: txLabel
+        })
+      });
+
+      if (!response.ok) {
+        setStatus(`Appeal transaction submitted: ${txLabel}. Sign in with the appellant wallet to save dashboard status.`);
+        return;
+      }
+
+      setStatus(`Appeal saved: ${txLabel}`);
     } catch (appealError) {
       setError(appealError instanceof Error ? appealError.message : "Appeal transaction failed.");
     } finally {
@@ -105,7 +121,7 @@ export function AppealForm({ disputeId }: { disputeId: string }) {
       {error ? <p className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</p> : null}
       {status ? (
         <p className="mt-8 rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
-          Appeal transaction submitted: {status}
+          {status}
         </p>
       ) : null}
       <div className="mt-6 flex justify-end">

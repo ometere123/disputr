@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, FileUp, Info, Loader2, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { isAddress, parseEther, type Address } from "viem";
 import { useAccount } from "wagmi";
@@ -31,6 +32,7 @@ function resultLabel(result: unknown) {
 }
 
 export function DisputeForm() {
+  const router = useRouter();
   const { address } = useAccount();
   const [step, setStep] = React.useState(0);
   const [respondent, setRespondent] = React.useState("");
@@ -101,7 +103,26 @@ export function DisputeForm() {
         scopeCid: scopeCid.trim(),
         stakeWei
       });
-      setStatus(resultLabel(result));
+      const txLabel = resultLabel(result);
+      const response = await fetch("/api/me/disputes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          respondent,
+          claimantCid: claimantCid.trim(),
+          scopeCid: scopeCid.trim(),
+          stakeGen: stake,
+          onChainTx: txLabel
+        })
+      });
+
+      if (!response.ok) {
+        setStatus(`Transaction submitted: ${txLabel}. Sign in with your wallet to save it to the dashboard.`);
+        return;
+      }
+
+      const data = (await response.json()) as { dispute: { id: string } };
+      router.push(`/disputes/${data.dispute.id}`);
     } catch (openError) {
       setError(openError instanceof Error ? openError.message : "Dispute transaction failed.");
     } finally {

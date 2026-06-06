@@ -1,4 +1,4 @@
-import { webhookDeliveries, webhooks, type DbClient } from "@disputr/db";
+import { notifications, webhookDeliveries, webhooks, type DbClient } from "@disputr/db";
 import { and, eq } from "drizzle-orm";
 import { signWebhookPayload } from "../lib/crypto.js";
 import type { AppEnv } from "../types.js";
@@ -23,6 +23,15 @@ export async function queueVerdictDelivered(c: Context<AppEnv>, payload: Verdict
     .select()
     .from(webhooks)
     .where(and(eq(webhooks.userId, identity.userId), eq(webhooks.active, true)));
+
+  await db.insert(notifications).values({
+    userId: identity.userId,
+    type: "verdict.delivered",
+    title: "Verdict delivered",
+    body: `Dispute ${payload.dispute_id} has a committed verdict.`,
+    href: `/disputes/${payload.dispute_id}/verdict`,
+    payload
+  });
 
   for (const hook of hooks) {
     if (!hook.events.includes("verdict.delivered")) {
@@ -89,6 +98,14 @@ export async function deliverQueuedWebhook(db: DbClient, deliveryId: string) {
     .where(eq(webhookDeliveries.id, delivery.id));
 
   if (!delivered) {
+    await db.insert(notifications).values({
+      userId: hook.userId,
+      type: "webhook.delivery_failed",
+      title: "Webhook delivery failed",
+      body: `Delivery ${delivery.id} failed with HTTP ${statusCode}.`,
+      href: "/developers",
+      payload: { deliveryId: delivery.id, statusCode }
+    });
     throw new Error(`Webhook delivery failed with status ${statusCode}`);
   }
 }

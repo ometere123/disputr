@@ -9,32 +9,40 @@ import { MobileActionCards } from "@/components/mobile-action-card";
 import { PageHeading } from "@/components/page-heading";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getUserDisputes, toDisputeTableRow } from "@/lib/server/dispute-data";
 
-const dashboardMetrics = [
-  {
-    label: "Total Volume Arbitrated",
-    value: "0",
-    unit: "GEN",
-    trend: "No database records yet",
-    icon: "wallet" as const
-  },
-  {
-    label: "Open Disputes",
-    value: "0",
-    unit: "",
-    trend: "No contract-indexed disputes",
-    icon: "gavel" as const
-  },
-  {
-    label: "Recent Verdicts",
-    value: "0",
-    unit: "",
-    trend: "No verdicts delivered yet",
-    icon: "check" as const
-  }
-];
+export const dynamic = "force-dynamic";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const disputes = await getUserDisputes(6);
+  const tableRows = disputes.map(toDisputeTableRow);
+  const openDisputes = disputes.filter((dispute) => dispute.status !== "resolved").length;
+  const recentVerdicts = disputes.filter((dispute) => dispute.status === "resolved").length;
+  const totalStake = disputes.reduce((sum, dispute) => sum + Number(dispute.stakeGen), 0);
+  const dashboardMetrics = [
+    {
+      label: "Total Volume Arbitrated",
+      value: totalStake.toLocaleString(),
+      unit: "GEN",
+      trend: disputes.length ? "From your indexed disputes" : "No database records yet",
+      icon: "wallet" as const
+    },
+    {
+      label: "Open Disputes",
+      value: String(openDisputes),
+      unit: "",
+      trend: openDisputes ? "Requiring evidence or evaluation" : "No open disputes",
+      icon: "gavel" as const
+    },
+    {
+      label: "Recent Verdicts",
+      value: String(recentVerdicts),
+      unit: "",
+      trend: recentVerdicts ? "Resolved disputes in your account" : "No verdicts delivered yet",
+      icon: "check" as const
+    }
+  ];
+
   return (
     <AppShell active="Dashboard">
       <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
@@ -52,8 +60,8 @@ export default function DashboardPage() {
           }
         />
         <div className="mt-8 grid grid-cols-2 gap-4 md:hidden">
-          <MobileMetric label="Staked" value="0" unit="GEN" icon={<WalletCards className="size-5" />} />
-          <MobileMetric label="Active Cases" value="0" icon={<Gavel className="size-5" />} />
+          <MobileMetric label="Staked" value={totalStake.toLocaleString()} unit="GEN" icon={<WalletCards className="size-5" />} />
+          <MobileMetric label="Active Cases" value={String(openDisputes)} icon={<Gavel className="size-5" />} />
           <MobileMetric label="Rewards Earned" value="0" unit="GEN" icon={<Trophy className="size-5" />} wide />
         </div>
         <div className="mt-10 hidden gap-5 md:grid md:grid-cols-3">
@@ -68,7 +76,7 @@ export default function DashboardPage() {
               View All
             </Link>
           </div>
-          <DisputeTable />
+          <DisputeTable disputes={tableRows} />
         </section>
         <section className="mt-12 md:hidden">
           <MobileActionCards />

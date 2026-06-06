@@ -5,6 +5,7 @@ import {
   jsonb,
   numeric,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -24,14 +25,100 @@ export const users = pgTable(
   "users",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name"),
     walletAddress: text("wallet_address"),
     email: text("email"),
+    emailVerified: timestamp("email_verified", { mode: "date", withTimezone: true }),
+    image: text("image"),
+    role: text("role").notNull().default("user"),
     authProvider: text("auth_provider").notNull().default("wallet"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+    notificationInApp: boolean("notification_in_app").notNull().default(true),
+    notificationEmail: boolean("notification_email").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
   },
   (table) => ({
     walletIdx: uniqueIndex("users_wallet_address_idx").on(table.walletAddress),
     emailIdx: uniqueIndex("users_email_idx").on(table.email)
+  })
+);
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state")
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.provider, table.providerAccountId] })
+  })
+);
+
+export const sessions = pgTable("sessions", {
+  sessionToken: text("session_token").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: timestamp("expires", { mode: "date", withTimezone: true }).notNull()
+});
+
+export const verificationTokens = pgTable(
+  "verification_tokens",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date", withTimezone: true }).notNull()
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.identifier, table.token] })
+  })
+);
+
+export const authenticators = pgTable(
+  "authenticators",
+  {
+    credentialID: text("credential_id").notNull().unique(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    providerAccountId: text("provider_account_id").notNull(),
+    credentialPublicKey: text("credential_public_key").notNull(),
+    counter: integer("counter").notNull(),
+    credentialDeviceType: text("credential_device_type").notNull(),
+    credentialBackedUp: boolean("credential_backed_up").notNull(),
+    transports: text("transports")
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.credentialID] })
+  })
+);
+
+export const wallets = pgTable(
+  "wallets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    address: text("address").notNull(),
+    chain: text("chain").notNull().default("genlayer"),
+    isPrimary: boolean("is_primary").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => ({
+    addressIdx: uniqueIndex("wallets_address_chain_idx").on(table.address, table.chain),
+    userIdx: index("wallets_user_id_idx").on(table.userId)
   })
 );
 
@@ -223,7 +310,32 @@ export const jobs = pgTable(
   })
 );
 
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    href: text("href"),
+    payload: jsonb("payload").$type<Record<string, unknown>>().notNull().default({}),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => ({
+    userIdx: index("notifications_user_id_idx").on(table.userId),
+    readIdx: index("notifications_read_idx").on(table.userId, table.readAt),
+    createdIdx: index("notifications_created_at_idx").on(table.createdAt)
+  })
+);
+
 export type User = typeof users.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+export type Wallet = typeof wallets.$inferSelect;
 export type Dispute = typeof disputes.$inferSelect;
 export type Verdict = typeof verdicts.$inferSelect;
 export type Appeal = typeof appeals.$inferSelect;
@@ -231,3 +343,4 @@ export type Credential = typeof credentials.$inferSelect;
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type Webhook = typeof webhooks.$inferSelect;
 export type WebhookDelivery = typeof webhookDeliveries.$inferSelect;
+export type Notification = typeof notifications.$inferSelect;

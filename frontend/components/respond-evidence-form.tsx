@@ -61,7 +61,22 @@ export function RespondEvidenceForm({ disputeId }: { disputeId: string }) {
         disputeId,
         respondentCid: respondentCid.trim()
       });
-      setStatus(resultLabel(result));
+      const txLabel = resultLabel(result);
+      const response = await fetch(`/api/me/disputes/${disputeId}/response`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          respondentCid: respondentCid.trim(),
+          onChainTx: txLabel
+        })
+      });
+
+      if (!response.ok) {
+        setStatus(`Response transaction submitted: ${txLabel}. Sign in with the respondent wallet to save dashboard status.`);
+        return;
+      }
+
+      setStatus(`Response saved: ${txLabel}`);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Response transaction failed.");
     } finally {
@@ -86,7 +101,7 @@ export function RespondEvidenceForm({ disputeId }: { disputeId: string }) {
       {error ? <p className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</p> : null}
       {status ? (
         <p className="mt-8 rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
-          Response transaction submitted: {status}
+          {status}
         </p>
       ) : null}
       <div className="mt-6 flex justify-end">

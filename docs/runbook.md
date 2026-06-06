@@ -24,6 +24,16 @@ pnpm build
 pnpm test
 ```
 
+## Supabase Schema
+
+Before testing sign-in, settings, notifications, API key creation, or webhook creation, run:
+
+```bash
+packages/db/migrations/0001_account_notifications.sql
+```
+
+Use the Supabase SQL editor or your preferred migration runner. The migration is additive and idempotent.
+
 ## Vercel
 
 Use the repository root as the Vercel project root. The checked-in `vercel.json` installs with pnpm and builds the frontend via:
@@ -33,6 +43,8 @@ pnpm --filter @disputr/frontend build
 ```
 
 Set the frontend env values in Vercel. Leave contract address env values empty until deployed addresses are provided.
+
+The frontend serves the logged-in user app through `/api/me/*` routes. These routes require `DATABASE_URL`, `AUTH_SECRET`, and `NEXTAUTH_URL`.
 
 ## Cloudflare Workers Backend
 
@@ -60,6 +72,8 @@ Configure secrets with Wrangler for:
 - contract address env values after manual GenLayer deployment
 
 The Worker uses Cloudflare Cron Triggers for scheduled dispute polling and Cloudflare Queues for webhook delivery retries. It is not an always-running server.
+
+External projects use the Worker `/v1/*` API with `Authorization: Bearer dk_...`. User dashboard actions use the frontend `/api/me/*` routes.
 
 ## Contract Deployment
 
