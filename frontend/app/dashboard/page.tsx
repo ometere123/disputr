@@ -6,6 +6,7 @@ import { ContractStatus } from "@/components/contract-status";
 import { DisputeTable } from "@/components/dispute-table";
 import { MetricCard } from "@/components/metric-card";
 import { MobileActionCards } from "@/components/mobile-action-card";
+import { OnboardingPanel } from "@/components/onboarding-panel";
 import { PageHeading } from "@/components/page-heading";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -24,21 +25,21 @@ export default async function DashboardPage() {
       label: "Total Volume Arbitrated",
       value: totalStake.toLocaleString(),
       unit: "GEN",
-      trend: disputes.length ? "From your indexed disputes" : "No database records yet",
+      trend: disputes.length ? "From your indexed disputes" : "Open a dispute to populate volume",
       icon: "wallet" as const
     },
     {
       label: "Open Disputes",
       value: String(openDisputes),
       unit: "",
-      trend: openDisputes ? "Requiring evidence or evaluation" : "No open disputes",
+      trend: openDisputes ? "Requiring evidence or evaluation" : "No active arbitration cases",
       icon: "gavel" as const
     },
     {
       label: "Recent Verdicts",
       value: String(recentVerdicts),
       unit: "",
-      trend: recentVerdicts ? "Resolved disputes in your account" : "No verdicts delivered yet",
+      trend: recentVerdicts ? "Resolved disputes in your account" : "Verdicts appear after evaluation",
       icon: "check" as const
     }
   ];
@@ -62,8 +63,9 @@ export default async function DashboardPage() {
         <div className="mt-8 grid grid-cols-2 gap-4 md:hidden">
           <MobileMetric label="Staked" value={totalStake.toLocaleString()} unit="GEN" icon={<WalletCards className="size-5" />} />
           <MobileMetric label="Active Cases" value={String(openDisputes)} icon={<Gavel className="size-5" />} />
-          <MobileMetric label="Rewards Earned" value="0" unit="GEN" icon={<Trophy className="size-5" />} wide />
+          <MobileMetric label="Recent Verdicts" value={String(recentVerdicts)} icon={<Trophy className="size-5" />} wide />
         </div>
+        {!disputes.length ? <OnboardingPanel /> : null}
         <div className="mt-10 hidden gap-5 md:grid md:grid-cols-3">
           {dashboardMetrics.map((metric) => (
             <MetricCard key={metric.label} {...metric} />
@@ -76,7 +78,11 @@ export default async function DashboardPage() {
               View All
             </Link>
           </div>
-          <DisputeTable disputes={tableRows} />
+          <DisputeTable
+            disputes={tableRows}
+            emptyTitle="No disputes indexed yet"
+            emptyDescription="Open a StudioNet case or create a B2B dispute through the API. Once a contract or database-backed case exists, it will appear here."
+          />
         </section>
         <section className="mt-12 md:hidden">
           <MobileActionCards />

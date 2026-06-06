@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Loader2, Save, UserRound } from "lucide-react";
+import { Bell, Loader2, MailCheck, Save, UserRound } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,6 +26,7 @@ export function SettingsForm() {
   const [notificationEmail, setNotificationEmail] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isSendingTest, setIsSendingTest] = React.useState(false);
   const [status, setStatus] = React.useState("");
   const [error, setError] = React.useState("");
 
@@ -113,6 +114,51 @@ export function SettingsForm() {
     }
   }
 
+  async function sendTestEmail() {
+    setError("");
+    setStatus("");
+    setIsSendingTest(true);
+
+    try {
+      const response = await fetch("/api/me/profile/test-email", { method: "POST" });
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        result?: { email: { ok: true } | { ok: false; reason: "not_configured" | "send_failed" } | false };
+      };
+
+      if (response.status === 401) {
+        setError("Sign in to test email delivery.");
+        return;
+      }
+
+      if (!response.ok) {
+        setError(
+          data.error === "email_required"
+            ? "Save an email address before sending a test."
+            : data.error === "email_notifications_disabled"
+              ? "Enable and save email notifications before sending a test."
+              : "Could not send test email."
+        );
+        return;
+      }
+
+      const email = data.result?.email;
+      if (email && typeof email === "object" && email.ok) {
+        setStatus("Test email sent. Check the saved inbox.");
+      } else if (email && typeof email === "object" && email.reason === "not_configured") {
+        setStatus("SMTP is not configured in production env yet.");
+      } else if (email && typeof email === "object" && email.reason === "send_failed") {
+        setStatus("Email provider rejected the test send.");
+      } else {
+        setStatus("Test notification created, but email was not sent.");
+      }
+    } catch {
+      setError("Could not send test email.");
+    } finally {
+      setIsSendingTest(false);
+    }
+  }
+
   return (
     <div className="space-y-5">
       <Card className="p-6">
@@ -152,6 +198,14 @@ export function SettingsForm() {
           <Button disabled={isSaving || isLoading} onClick={() => void handleSave()} variant="outline">
             {isSaving ? <Loader2 className="size-5 animate-spin" /> : <Save className="size-5" />}
             Save Preferences
+          </Button>
+          <Button
+            disabled={isSendingTest || isLoading || !notificationEmail || !email}
+            onClick={() => void sendTestEmail()}
+            variant="outline"
+          >
+            {isSendingTest ? <Loader2 className="size-5 animate-spin" /> : <MailCheck className="size-5" />}
+            Send Test Email
           </Button>
           {status ? <span className="text-sm font-semibold text-[#176d44]">{status}</span> : null}
           {error ? <span className="text-sm font-semibold text-red-700">{error}</span> : null}

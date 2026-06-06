@@ -1,12 +1,13 @@
 "use client";
 
-import { Activity, AlertCircle, Copy, KeyRound, Loader2, Trash2, TrendingUp, Webhook } from "lucide-react";
+import { Activity, AlertCircle, Code2, Copy, KeyRound, Loader2, Send, Trash2, TrendingUp, Webhook } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { DISPUTR_API_URL } from "@/config/app";
 
 const availableScopes = ["read:verdicts", "write:disputes", "read:credentials", "write:webhooks"] as const;
 
@@ -28,6 +29,17 @@ type WebhookRow = {
   secretHint: string;
 };
 
+type DeliveryRow = {
+  id: string;
+  webhookId: string;
+  webhookUrl: string;
+  event: string;
+  status: string;
+  attempts: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en", { month: "short", day: "2-digit", year: "numeric" }).format(new Date(value));
 }
@@ -35,6 +47,7 @@ function formatDate(value: string) {
 export function DeveloperSettings() {
   const [apiKeys, setApiKeys] = React.useState<ApiKeyRow[]>([]);
   const [webhooks, setWebhooks] = React.useState<WebhookRow[]>([]);
+  const [deliveries, setDeliveries] = React.useState<DeliveryRow[]>([]);
   const [keyLabel, setKeyLabel] = React.useState("Production key");
   const [selectedScopes, setSelectedScopes] = React.useState<string[]>(["read:verdicts", "write:disputes"]);
   const [endpointUrl, setEndpointUrl] = React.useState("");
@@ -45,30 +58,34 @@ export function DeveloperSettings() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isCreatingKey, setIsCreatingKey] = React.useState(false);
   const [isSavingWebhook, setIsSavingWebhook] = React.useState(false);
+  const [testingWebhookId, setTestingWebhookId] = React.useState("");
 
   async function loadDeveloperData() {
     setIsLoading(true);
     setError("");
 
     try {
-      const [keysResponse, webhooksResponse] = await Promise.all([
+      const [keysResponse, webhooksResponse, deliveriesResponse] = await Promise.all([
         fetch("/api/me/api-keys", { cache: "no-store" }),
-        fetch("/api/me/webhooks", { cache: "no-store" })
+        fetch("/api/me/webhooks", { cache: "no-store" }),
+        fetch("/api/me/webhook-deliveries", { cache: "no-store" })
       ]);
 
-      if (keysResponse.status === 401 || webhooksResponse.status === 401) {
+      if (keysResponse.status === 401 || webhooksResponse.status === 401 || deliveriesResponse.status === 401) {
         setError("Sign in to manage developer settings.");
         return;
       }
 
-      if (!keysResponse.ok || !webhooksResponse.ok) {
+      if (!keysResponse.ok || !webhooksResponse.ok || !deliveriesResponse.ok) {
         throw new Error("Developer data load failed.");
       }
 
       const keysData = (await keysResponse.json()) as { apiKeys: ApiKeyRow[] };
       const webhooksData = (await webhooksResponse.json()) as { webhooks: WebhookRow[] };
+      const deliveriesData = (await deliveriesResponse.json()) as { deliveries: DeliveryRow[] };
       setApiKeys(keysData.apiKeys);
       setWebhooks(webhooksData.webhooks);
+      setDeliveries(deliveriesData.deliveries);
     } catch {
       setError("Could not load developer settings.");
     } finally {
@@ -163,10 +180,47 @@ export function DeveloperSettings() {
     await loadDeveloperData();
   }
 
+  async function testWebhook(id: string) {
+    setError("");
+    setStatus("");
+    setTestingWebhookId(id);
+
+    try {
+      const response = await fetch(`/api/me/webhooks/${id}/test`, { method: "POST" });
+      const data = (await response.json().catch(() => ({}))) as { ok?: boolean; statusCode?: number; statusText?: string };
+
+      if (!response.ok) {
+        throw new Error("Webhook test failed.");
+      }
+
+      setStatus(
+        data.ok
+          ? `Test webhook delivered with HTTP ${data.statusCode}.`
+          : `Test webhook sent, but the endpoint returned ${data.statusCode || data.statusText || "an error"}.`
+      );
+      await loadDeveloperData();
+    } catch {
+      setError("Could not send test webhook.");
+    } finally {
+      setTestingWebhookId("");
+    }
+  }
+
   async function copy(value: string) {
     await navigator.clipboard.writeText(value);
     setStatus("Copied.");
   }
+
+  const curlSnippet = `curl -X POST ${DISPUTR_API_URL}/v1/dispute \\
+  -H "Authorization: Bearer ${plaintextKey || "dk_live_your_key"}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "escrow_address": "0x1111111111111111111111111111111111111111",
+    "claimant": "0x2222222222222222222222222222222222222222",
+    "respondent": "0x3333333333333333333333333333333333333333",
+    "evidence_bundle_hash": "bafy...",
+    "stake_gen": "0"
+  }'`;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.75fr)]">
@@ -260,6 +314,25 @@ export function DeveloperSettings() {
               </tbody>
             </table>
           </div>
+
+          <div className="mt-6 rounded-xl border border-border bg-[#25130d] p-4 text-[#fff3ea]">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <Code2 className="size-5 text-[#f3c7aa]" />
+                <div>
+                  <p className="font-extrabold">Copy a working API request</p>
+                  <p className="text-sm text-[#ead1c2]">Use this after creating a key with write:disputes.</p>
+                </div>
+              </div>
+              <Button onClick={() => void copy(curlSnippet)} size="sm" variant="secondary">
+                <Copy className="size-4" />
+                Copy curl
+              </Button>
+            </div>
+            <pre className="mt-4 overflow-x-auto text-xs leading-6">
+              <code>{curlSnippet}</code>
+            </pre>
+          </div>
         </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -283,6 +356,48 @@ export function DeveloperSettings() {
             </p>
           </Card>
         </div>
+
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-extrabold">Recent Delivery Logs</h2>
+            <Badge variant={deliveries.length ? "success" : "muted"}>{deliveries.length} shown</Badge>
+          </div>
+          <div className="mt-5 overflow-x-auto">
+            {deliveries.length ? (
+              <table className="w-full min-w-[620px] text-left text-sm">
+                <thead className="border-b border-border text-xs font-semibold uppercase text-muted-foreground">
+                  <tr>
+                    <th className="py-3">Event</th>
+                    <th className="py-3">Endpoint</th>
+                    <th className="py-3">Status</th>
+                    <th className="py-3">Attempts</th>
+                    <th className="py-3">Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deliveries.map((delivery) => (
+                    <tr key={delivery.id} className="border-b border-border last:border-b-0">
+                      <td className="py-3 font-mono">{delivery.event}</td>
+                      <td className="max-w-[240px] truncate py-3">{delivery.webhookUrl}</td>
+                      <td className="py-3">
+                        <Badge variant={delivery.status === "delivered" ? "success" : delivery.status === "failed" ? "danger" : "muted"}>
+                          {delivery.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3">{delivery.attempts}</td>
+                      <td className="py-3">{formatDate(delivery.createdAt)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="rounded-xl border border-dashed border-border bg-card px-5 py-8 text-center">
+                <p className="font-bold text-primary">No webhook deliveries yet</p>
+                <p className="mt-2 text-sm text-muted-foreground">Save an endpoint and send a test to create the first log.</p>
+              </div>
+            )}
+          </div>
+        </Card>
       </div>
 
       <Card className="min-w-0 p-6">
@@ -335,9 +450,15 @@ export function DeveloperSettings() {
               <p className="mt-1 font-mono text-xs text-muted-foreground">{webhook.secretHint}</p>
               <div className="mt-3 flex items-center justify-between">
                 <Badge variant={webhook.active ? "success" : "muted"}>{webhook.active ? "active" : "inactive"}</Badge>
-                <Button onClick={() => void deleteWebhook(webhook.id)} size="sm" variant="ghost">
-                  <Trash2 className="size-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button disabled={testingWebhookId === webhook.id} onClick={() => void testWebhook(webhook.id)} size="sm" variant="outline">
+                    {testingWebhookId === webhook.id ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+                    Test
+                  </Button>
+                  <Button onClick={() => void deleteWebhook(webhook.id)} size="sm" variant="ghost">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           ))}

@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, createHmac, randomBytes } from "node:crypto";
 
 export function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex");
@@ -18,4 +18,13 @@ export function hashApiKey(key: string) {
 
 export function generateWebhookSecret() {
   return `whsec_${randomBytes(32).toString("base64url")}`;
+}
+
+export function signWebhookPayload(payload: string, secret: string, timestamp = Math.floor(Date.now() / 1000)) {
+  const signature = createHmac("sha256", secret).update(`${timestamp}.${payload}`).digest("hex");
+
+  return {
+    timestamp,
+    signature: `v1=${signature}`
+  };
 }

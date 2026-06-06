@@ -20,6 +20,7 @@ const navGroups = [
     links: [
       { label: "Introduction", href: "#introduction" },
       { label: "Two-sided product", href: "#audiences" },
+      { label: "Pricing model", href: "#pricing-model" },
       { label: "Contract config", href: "#contracts" }
     ]
   },
@@ -29,6 +30,7 @@ const navGroups = [
       { label: "API keys", href: "#api-keys" },
       { label: "Open dispute", href: "#open-dispute" },
       { label: "Webhooks", href: "#webhooks" },
+      { label: "Receiver example", href: "#webhook-receiver" },
       { label: "Endpoints", href: "#api-reference" }
     ]
   },
@@ -36,6 +38,7 @@ const navGroups = [
     title: "Operations",
     links: [
       { label: "Deployments", href: "#deployments" },
+      { label: "Error model", href: "#error-model" },
       { label: "Security", href: "#security" }
     ]
   }
@@ -144,6 +147,19 @@ export default function DocsPage() {
             </div>
           </section>
 
+          <section id="pricing-model" className="scroll-mt-24">
+            <h2 className="text-3xl font-extrabold text-primary">Pricing model</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">
+              Disputr pricing is based on case volume and integration depth. StudioNet uses beta pricing without checkout;
+              production billing and fee settlement should only activate when mainnet economics are final.
+            </p>
+            <div className="mt-5 grid gap-4 md:grid-cols-3">
+              <Info title="Users" body="Free StudioNet access for wallet onboarding, evidence upload, verdict reads, and credentials." />
+              <Info title="Developers" body="API keys, signed webhooks, delivery logs, and credential reads for integration teams." />
+              <Info title="Protocols" body="Higher volume, retry monitoring, custom appeal windows, and audit exports for platforms." />
+            </div>
+          </section>
+
           <section id="contracts" className="scroll-mt-24">
             <h2 className="text-3xl font-extrabold text-primary">Contract config</h2>
             <p className="mt-3 leading-7 text-muted-foreground">
@@ -205,6 +221,30 @@ NEXT_PUBLIC_APPEAL_ORACLE_CONTRACT_ADDRESS=0x...`}
               code={`Disputr-Timestamp: 1780713600
 Disputr-Signature: v1=<hmac_sha256(timestamp.body)>`}
             />
+            <p className="mt-4 leading-7 text-muted-foreground">
+              Use the Developers page to send a signed test webhook. Each test creates a real delivery log so you can see
+              whether your endpoint accepted the request.
+            </p>
+          </section>
+
+          <section id="webhook-receiver" className="scroll-mt-24">
+            <h2 className="text-3xl font-extrabold text-primary">Webhook receiver example</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">
+              Receivers should verify the timestamp and signature before processing the event. Reject stale timestamps to
+              prevent replay attacks.
+            </p>
+            <CodeBlock
+              filename="receiver.ts"
+              code={`import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verify(body: string, secret: string, timestamp: string, signature: string) {
+  const expected = "v1=" + createHmac("sha256", secret)
+    .update(\`\${timestamp}.\${body}\`)
+    .digest("hex");
+
+  return timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+}`}
+            />
           </section>
 
           <section id="api-reference" className="scroll-mt-24">
@@ -236,6 +276,24 @@ Disputr-Signature: v1=<hmac_sha256(timestamp.body)>`}
             </div>
           </section>
 
+          <section id="error-model" className="scroll-mt-24">
+            <h2 className="text-3xl font-extrabold text-primary">Error model</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">
+              API responses use stable machine-readable error strings so B2B integrators can build predictable retries and
+              operator alerts.
+            </p>
+            <CodeBlock
+              filename="errors.json"
+              code={`{
+  "unauthorized": "Missing or invalid session/API key",
+  "validation_error": "Request body failed schema checks",
+  "insufficient_scope": "API key does not include the required scope",
+  "not_found": "The requested dispute, webhook, or verdict does not exist",
+  "contract_not_configured": "A required GenLayer address is missing"
+}`}
+            />
+          </section>
+
           <section id="security" className="scroll-mt-24">
             <h2 className="text-3xl font-extrabold text-primary">Security notes</h2>
             <div className="mt-5 space-y-3">
@@ -261,6 +319,7 @@ Disputr-Signature: v1=<hmac_sha256(timestamp.body)>`}
               {(
                 [
                 ["Introduction", "#introduction"],
+                ["Pricing model", "#pricing-model"],
                 ["API keys", "#api-keys"],
                 ["Webhooks", "#webhooks"],
                 ["Endpoint reference", "#api-reference"],

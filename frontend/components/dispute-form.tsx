@@ -95,6 +95,7 @@ export function DisputeForm() {
 
     setIsSubmitting(true);
     try {
+      setStatus("Submitting dispute transaction to GenLayer StudioNet...");
       const result = await openDisputeOnChain({
         account: address,
         claimant: address,
@@ -104,6 +105,7 @@ export function DisputeForm() {
         stakeWei
       });
       const txLabel = resultLabel(result);
+      setStatus(`Transaction submitted: ${txLabel}. Saving the dispute to your dashboard...`);
       const response = await fetch("/api/me/disputes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,7 +119,7 @@ export function DisputeForm() {
       });
 
       if (!response.ok) {
-        setStatus(`Transaction submitted: ${txLabel}. Sign in with your wallet to save it to the dashboard.`);
+        setStatus(`Transaction submitted: ${txLabel}. Sign in with your wallet to index it in the dashboard.`);
         return;
       }
 
@@ -166,7 +168,7 @@ export function DisputeForm() {
         {error ? <p className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</p> : null}
         {status ? (
           <p className="mt-8 rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
-            Dispute transaction submitted: {status}
+            {status}
           </p>
         ) : null}
 
@@ -199,6 +201,12 @@ export function DisputeForm() {
             <div className="mt-4">
               <ContractStatus />
             </div>
+            {!contractStatus.disputr ? (
+              <p className="mt-4 rounded-xl border border-[#e2c98a] bg-[#fff7df] p-4 text-sm font-semibold text-[#6d5134]">
+                Add NEXT_PUBLIC_DISPUTR_CONTRACT_ADDRESS before sending transactions. The form remains usable for reviewing
+                required fields while contracts are being configured.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
