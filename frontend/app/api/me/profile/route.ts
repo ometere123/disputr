@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -62,6 +63,19 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "profile_update_failed" }, { status: 500 });
   }
 
+  const shouldConfirmEmail =
+    parsed.data.notificationEmail === true && Boolean(updated.email) && (!user.notificationEmail || user.email !== updated.email);
+
+  const emailConfirmation = shouldConfirmEmail
+    ? await notifyUser(db, {
+        userId: updated.id,
+        type: "notifications.email_enabled",
+        title: "Email notifications enabled",
+        body: "Disputr will send dispute, verdict, API key, and webhook updates to this address.",
+        href: "/settings"
+      })
+    : undefined;
+
   return NextResponse.json({
     user: {
       id: updated.id,
@@ -70,6 +84,7 @@ export async function PATCH(request: Request) {
       walletAddress: updated.walletAddress,
       notificationInApp: updated.notificationInApp,
       notificationEmail: updated.notificationEmail
-    }
+    },
+    emailConfirmation
   });
 }

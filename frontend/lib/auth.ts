@@ -10,6 +10,7 @@ import Nodemailer from "next-auth/providers/nodemailer";
 import { SiweMessage } from "siwe";
 import { z } from "zod";
 import { getDb } from "@/lib/server/db";
+import { formatEmailFrom } from "@/lib/server/email";
 
 const siweCredentialsSchema = z.object({
   message: z.string(),
@@ -122,11 +123,13 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
-if (db && process.env.EMAIL_SERVER && process.env.EMAIL_FROM) {
+const emailFrom = formatEmailFrom(process.env.EMAIL_FROM);
+
+if (db && process.env.EMAIL_SERVER && emailFrom) {
   providers.push(
     Nodemailer({
       server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM
+      from: emailFrom
     })
   );
 }

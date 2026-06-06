@@ -63,6 +63,10 @@ if (process.env.NEXT_PUBLIC_GENLAYER_CHAIN_ID && process.env.NEXT_PUBLIC_GENLAYE
   console.warn("NEXT_PUBLIC_GENLAYER_CHAIN_ID should be 61999 for GenLayer StudioNet.");
 }
 
+if ((process.env.EMAIL_SERVER && !process.env.EMAIL_FROM) || (!process.env.EMAIL_SERVER && process.env.EMAIL_FROM)) {
+  console.warn("Email notifications need both EMAIL_SERVER and EMAIL_FROM. Use EMAIL_FROM like \"Disputr <no-reply@yourdomain.com>\".");
+}
+
 if (!process.exitCode) {
   console.log("Environment check complete. DATABASE_URL should point to Supabase Postgres or a Cloudflare Hyperdrive-backed Supabase connection.");
 }

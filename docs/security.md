@@ -24,6 +24,8 @@ The app separates public env values from server secrets, avoids Node-only APIs i
 
 Profile settings, notification reads, API keys, webhooks, and user disputes are scoped to the current Auth.js session. Wallet login uses SIWE and stores linked wallets in Supabase.
 
+Email notifications require `EMAIL_SERVER` and `EMAIL_FROM` on the Vercel server runtime. The sender should be an authenticated SMTP sender, for example `"Disputr <no-reply@yourdomain.com>"`. SMTP secrets must never be exposed through `NEXT_PUBLIC_` variables.
+
 ## Workers
 
 The backend runs on Cloudflare Workers. Worker code uses request, scheduled, and queue events rather than in-process loops. Node compatibility is enabled for dependencies that need supported Node APIs.

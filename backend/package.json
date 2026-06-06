@@ -9,7 +9,7 @@
     "deploy": "corepack pnpm --filter @disputr/db build && wrangler deploy",
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "corepack pnpm --filter @disputr/db build && vitest run --passWithNoTests"
   },
   "dependencies": {
     "@disputr/db": "workspace:*",

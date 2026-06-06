@@ -1,7 +1,8 @@
-import { notifications, webhooks } from "@disputr/db";
+import { webhooks } from "@disputr/db";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -24,7 +25,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  await db.insert(notifications).values({
+  await notifyUser(db, {
     userId: user.id,
     type: "webhook.deleted",
     title: "Webhook removed",

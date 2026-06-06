@@ -14,6 +14,9 @@ type ProfileResponse = {
     notificationInApp: boolean;
     notificationEmail: boolean;
   };
+  emailConfirmation?: {
+    email: { ok: true } | { ok: false; reason: "not_configured" | "send_failed" } | false;
+  };
 };
 
 export function SettingsForm() {
@@ -92,7 +95,17 @@ export function SettingsForm() {
         throw new Error("Profile save failed.");
       }
 
-      setStatus("Settings saved.");
+      const data = (await response.json()) as ProfileResponse;
+      const emailStatus = data.emailConfirmation?.email;
+      if (emailStatus && typeof emailStatus === "object" && emailStatus.ok) {
+        setStatus("Settings saved. Confirmation email sent.");
+      } else if (notificationEmail && email && emailStatus && typeof emailStatus === "object" && emailStatus.reason === "not_configured") {
+        setStatus("Settings saved. Add SMTP env values to send email notifications.");
+      } else if (notificationEmail && email && emailStatus && typeof emailStatus === "object" && emailStatus.reason === "send_failed") {
+        setStatus("Settings saved. Email provider rejected the confirmation send.");
+      } else {
+        setStatus("Settings saved.");
+      }
     } catch {
       setError("Could not save settings.");
     } finally {

@@ -89,7 +89,7 @@ export function AppShell({
               Pricing
             </Link>
             <div className="flex items-center justify-around text-sm text-muted-foreground">
-              <Link href="/developers/api-docs" className="flex flex-col items-center gap-2">
+              <Link href="/docs" className="flex flex-col items-center gap-2">
                 <BookOpen className="size-5" />
                 Docs
               </Link>

@@ -46,6 +46,13 @@ Set the frontend env values in Vercel. Leave contract address env values empty u
 
 The frontend serves the logged-in user app through `/api/me/*` routes. These routes require `DATABASE_URL`, `AUTH_SECRET`, and `NEXTAUTH_URL`.
 
+Email notifications are sent by the Vercel/Next.js server routes, not by the Cloudflare Worker. Configure both values:
+
+- `EMAIL_SERVER`, for example `smtp://smtp-user:smtp-password@smtp-relay.brevo.com:587`
+- `EMAIL_FROM`, for example `"Disputr <no-reply@yourdomain.com>"`
+
+The settings page sends a confirmation email when a user first enables email notifications or changes the destination email.
+
 ## Cloudflare Workers Backend
 
 The backend deploy target is Cloudflare Workers. Do not deploy until contract and production env values are ready.

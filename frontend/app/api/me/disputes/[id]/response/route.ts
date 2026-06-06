@@ -1,8 +1,9 @@
-import { disputes, notifications } from "@disputr/db";
+import { disputes } from "@disputr/db";
 import { and, eq, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -42,7 +43,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  await db.insert(notifications).values({
+  await notifyUser(db, {
     userId: user.id,
     type: "dispute.response_submitted",
     title: "Evidence submitted",

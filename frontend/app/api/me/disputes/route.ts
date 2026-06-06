@@ -1,8 +1,9 @@
-import { disputes, notifications, wallets } from "@disputr/db";
+import { disputes, wallets } from "@disputr/db";
 import { desc, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -93,7 +94,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "dispute_create_failed" }, { status: 500 });
   }
 
-  await db.insert(notifications).values({
+  await notifyUser(db, {
     userId: user.id,
     type: "dispute.created",
     title: "Dispute opened",

@@ -9,7 +9,7 @@
     "build": "corepack pnpm -r build",
     "lint": "corepack pnpm -r lint",
     "typecheck": "corepack pnpm -r typecheck",
-    "test": "vitest run && corepack pnpm -r test",
+    "test": "vitest run tests/static.test.ts && corepack pnpm -r test",
     "env:check": "tsx scripts/env_check.ts",
     "seed": "tsx scripts/seed.ts"
   },

@@ -70,7 +70,7 @@ export default function LandingPage() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/developers/api-docs">
+              <Link href="/docs">
                 Read the Docs <BookOpen className="size-5" />
               </Link>
             </Button>

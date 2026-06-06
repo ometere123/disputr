@@ -18,6 +18,8 @@ Disputr has two connected surfaces:
 
 The user app uses session-authenticated Next.js routes under `/api/me/*`. External integrations use the Cloudflare Worker `/v1/*` API with API key authentication.
 
+Email notification sends also live in the frontend server routes because they use SMTP through Nodemailer. The Worker remains request/event based and is not used as an SMTP process.
+
 ## Cloudflare Worker Events
 
 Workers are request/event based, not an always-running VPS. Disputr uses:

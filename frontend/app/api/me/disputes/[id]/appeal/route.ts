@@ -1,8 +1,9 @@
-import { appeals, disputes, notifications } from "@disputr/db";
+import { appeals, disputes } from "@disputr/db";
 import { and, eq, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -63,7 +64,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     .set({ status: "appealed", onChainTx: parsed.data.onChainTx, updatedAt: new Date() })
     .where(eq(disputes.id, dispute.id));
 
-  await db.insert(notifications).values({
+  await notifyUser(db, {
     userId: user.id,
     type: "appeal.initiated",
     title: "Appeal filed",

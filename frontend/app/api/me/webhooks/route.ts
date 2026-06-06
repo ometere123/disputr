@@ -1,9 +1,10 @@
-import { notifications, webhooks } from "@disputr/db";
+import { webhooks } from "@disputr/db";
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { generateWebhookSecret } from "@/lib/server/crypto";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "webhook_create_failed" }, { status: 500 });
   }
 
-  await db.insert(notifications).values({
+  await notifyUser(db, {
     userId: user.id,
     type: "webhook.created",
     title: "Webhook saved",

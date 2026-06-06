@@ -1,9 +1,10 @@
-import { apiKeys, apiScopes, notifications } from "@disputr/db";
+import { apiKeys, apiScopes } from "@disputr/db";
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { generateApiKey, hashApiKey } from "@/lib/server/crypto";
 import { getDb } from "@/lib/server/db";
+import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
 export const runtime = "nodejs";
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "api_key_create_failed" }, { status: 500 });
   }
 
-  await db.insert(notifications).values({
+  await notifyUser(db, {
     userId: user.id,
     type: "api_key.created",
     title: "API key created",
