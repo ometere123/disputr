@@ -5,13 +5,13 @@ import {
   Gavel,
   Grid2X2,
   HelpCircle,
-  Search,
   Settings
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { NotificationBell } from "@/components/notification-bell";
+import { SearchForm } from "@/components/search-form";
 import { WalletConnect } from "@/components/wallet-connect";
 import { cn } from "@/lib/utils";
 
@@ -39,10 +39,7 @@ export function AppShell({
           <Link href="/" className="mr-auto flex items-center md:w-56">
             <Image src="/disputr-logo.png" alt="Disputr" width={128} height={48} priority className="h-8 w-auto" />
           </Link>
-          <div className="hidden h-11 w-full max-w-md items-center gap-3 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground md:flex">
-            <Search className="size-5" />
-            <span>{searchPlaceholder}</span>
-          </div>
+          <SearchForm placeholder={searchPlaceholder} />
           <div className="ml-auto flex items-center gap-3">
             <NotificationBell />
             <Link aria-label="Settings" href="/settings" className="hidden rounded-full p-2 text-primary hover:bg-muted md:inline-flex">

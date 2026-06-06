@@ -6,7 +6,8 @@ import { PageHeading } from "@/components/page-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getDisputeForCurrentUser, statusLabel } from "@/lib/server/dispute-data";
+import { statusLabel } from "@/lib/dispute-search";
+import { getDisputeForCurrentUser } from "@/lib/server/dispute-data";
 import { compactAddress } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";

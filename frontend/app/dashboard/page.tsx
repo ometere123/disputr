@@ -14,7 +14,7 @@ import { getUserDisputes, toDisputeTableRow } from "@/lib/server/dispute-data";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const disputes = await getUserDisputes(6);
+  const disputes = await getUserDisputes({ limit: 6 });
   const tableRows = disputes.map(toDisputeTableRow);
   const openDisputes = disputes.filter((dispute) => dispute.status !== "resolved").length;
   const recentVerdicts = disputes.filter((dispute) => dispute.status === "resolved").length;

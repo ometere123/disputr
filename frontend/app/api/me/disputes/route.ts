@@ -2,6 +2,7 @@ import { disputes, wallets } from "@disputr/db";
 import { desc, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { filterDisputes } from "@/lib/dispute-search";
 import { getDb } from "@/lib/server/db";
 import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
@@ -36,7 +37,7 @@ async function getUserAddresses(userId: string, fallback?: string | null) {
   return [...addresses];
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -49,14 +50,15 @@ export async function GET() {
   }
 
   const db = getDb();
+  const search = new URL(request.url).searchParams.get("q") ?? "";
   const rows = await db
     .select()
     .from(disputes)
     .where(or(inArray(disputes.claimant, addresses), inArray(disputes.respondent, addresses)))
     .orderBy(desc(disputes.createdAt))
-    .limit(50);
+    .limit(search ? 200 : 50);
 
-  return NextResponse.json({ disputes: rows });
+  return NextResponse.json({ disputes: filterDisputes(rows, search).slice(0, 50) });
 }
 
 export async function POST(request: Request) {

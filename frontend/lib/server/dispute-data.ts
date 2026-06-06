@@ -1,20 +1,9 @@
 import { credentials, disputes, verdicts, wallets, type Dispute, type Verdict } from "@disputr/db";
 import { desc, eq, inArray, or } from "drizzle-orm";
+import { filterDisputes, statusLabel } from "@/lib/dispute-search";
 import { getDb } from "@/lib/server/db";
 import { getCurrentUser } from "@/lib/server/user";
 import { compactAddress } from "@/lib/utils";
-
-export function statusLabel(status: string) {
-  const labels: Record<string, string> = {
-    pending_response: "Pending Response",
-    ready_for_evaluation: "Evaluating",
-    resolved: "Resolved",
-    appealed: "Appealed",
-    pending: "Pending"
-  };
-
-  return labels[status] ?? status.replaceAll("_", " ");
-}
 
 async function getCurrentUserAddresses() {
   const user = await getCurrentUser();
@@ -45,7 +34,7 @@ export function toDisputeTableRow(dispute: Dispute) {
   };
 }
 
-export async function getUserDisputes(limit = 50) {
+export async function getUserDisputes({ limit = 50, search = "" }: { limit?: number; search?: string } = {}) {
   const { addresses } = await getCurrentUserAddresses();
 
   if (!addresses.length) {
@@ -53,12 +42,14 @@ export async function getUserDisputes(limit = 50) {
   }
 
   const db = getDb();
-  return db
+  const rows = await db
     .select()
     .from(disputes)
     .where(or(inArray(disputes.claimant, addresses), inArray(disputes.respondent, addresses)))
     .orderBy(desc(disputes.createdAt))
-    .limit(limit);
+    .limit(search ? 200 : limit);
+
+  return filterDisputes(rows, search).slice(0, limit);
 }
 
 export async function getDisputeForCurrentUser(id: string) {
