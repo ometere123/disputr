@@ -24,11 +24,15 @@ export function SettingsForm() {
   const [email, setEmail] = React.useState("");
   const [notificationInApp, setNotificationInApp] = React.useState(true);
   const [notificationEmail, setNotificationEmail] = React.useState(false);
+  const [savedEmail, setSavedEmail] = React.useState<string | null>(null);
+  const [savedNotificationEmail, setSavedNotificationEmail] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSaving, setIsSaving] = React.useState(false);
   const [isSendingTest, setIsSendingTest] = React.useState(false);
   const [status, setStatus] = React.useState("");
   const [error, setError] = React.useState("");
+
+  const hasUnsavedEmailChange = email !== (savedEmail ?? "") || notificationEmail !== savedNotificationEmail;
 
   React.useEffect(() => {
     let cancelled = false;
@@ -50,8 +54,10 @@ export function SettingsForm() {
         if (!cancelled) {
           setName(data.user.name ?? "");
           setEmail(data.user.email ?? "");
+          setSavedEmail(data.user.email ?? "");
           setNotificationInApp(data.user.notificationInApp);
           setNotificationEmail(data.user.notificationEmail);
+          setSavedNotificationEmail(data.user.notificationEmail);
         }
       } catch {
         if (!cancelled) {
@@ -93,10 +99,18 @@ export function SettingsForm() {
       }
 
       if (!response.ok) {
-        throw new Error("Profile save failed.");
+        const body = (await response.json().catch(() => ({}))) as { error?: string };
+        if (body.error === "db_unavailable") {
+          setError("Database is unreachable. Try again shortly.");
+        } else {
+          setError("Could not save settings.");
+        }
+        return;
       }
 
       const data = (await response.json()) as ProfileResponse;
+      setSavedEmail(data.user.email ?? "");
+      setSavedNotificationEmail(data.user.notificationEmail);
       const emailStatus = data.emailConfirmation?.email;
       if (emailStatus && typeof emailStatus === "object" && emailStatus.ok) {
         setStatus("Settings saved. Confirmation email sent.");
@@ -200,7 +214,7 @@ export function SettingsForm() {
             Save Preferences
           </Button>
           <Button
-            disabled={isSendingTest || isLoading || !notificationEmail || !email}
+            disabled={isSendingTest || isLoading || !notificationEmail || !email || hasUnsavedEmailChange}
             onClick={() => void sendTestEmail()}
             variant="outline"
           >
@@ -209,6 +223,9 @@ export function SettingsForm() {
           </Button>
           {status ? <span className="text-sm font-semibold text-[#176d44]">{status}</span> : null}
           {error ? <span className="text-sm font-semibold text-red-700">{error}</span> : null}
+          {!error && !status && hasUnsavedEmailChange && notificationEmail && email ? (
+            <span className="text-sm font-semibold text-muted-foreground">Save preferences before sending a test.</span>
+          ) : null}
         </div>
       </Card>
     </div>

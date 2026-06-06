@@ -16,7 +16,13 @@ const profileSchema = z.object({
 });
 
 export async function GET() {
-  const user = await getCurrentUser();
+  let user;
+  try {
+    user = await getCurrentUser();
+  } catch (error) {
+    console.error("profile GET: getCurrentUser failed", error);
+    return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
+  }
 
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -35,7 +41,13 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const user = await getCurrentUser();
+  let user;
+  try {
+    user = await getCurrentUser();
+  } catch (error) {
+    console.error("profile PATCH: getCurrentUser failed", error);
+    return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
+  }
 
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -46,45 +58,55 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "validation_error", issues: parsed.error.issues }, { status: 400 });
   }
 
-  const db = getDb();
-  const [updated] = await db
-    .update(users)
-    .set({
-      ...("name" in parsed.data ? { name: parsed.data.name } : {}),
-      ...("email" in parsed.data ? { email: parsed.data.email || null } : {}),
-      ...("notificationInApp" in parsed.data ? { notificationInApp: parsed.data.notificationInApp } : {}),
-      ...("notificationEmail" in parsed.data ? { notificationEmail: parsed.data.notificationEmail } : {}),
-      updatedAt: new Date()
-    })
-    .where(eq(users.id, user.id))
-    .returning();
-
-  if (!updated) {
-    return NextResponse.json({ error: "profile_update_failed" }, { status: 500 });
-  }
-
-  const shouldConfirmEmail =
-    parsed.data.notificationEmail === true && Boolean(updated.email) && (!user.notificationEmail || user.email !== updated.email);
-
-  const emailConfirmation = shouldConfirmEmail
-    ? await notifyUser(db, {
-        userId: updated.id,
-        type: "notifications.email_enabled",
-        title: "Email notifications enabled",
-        body: "Disputr will send dispute, verdict, API key, and webhook updates to this address.",
-        href: "/settings"
+  try {
+    const db = getDb();
+    const [updated] = await db
+      .update(users)
+      .set({
+        ...("name" in parsed.data ? { name: parsed.data.name } : {}),
+        ...("email" in parsed.data ? { email: parsed.data.email || null } : {}),
+        ...("notificationInApp" in parsed.data ? { notificationInApp: parsed.data.notificationInApp } : {}),
+        ...("notificationEmail" in parsed.data ? { notificationEmail: parsed.data.notificationEmail } : {}),
+        updatedAt: new Date()
       })
-    : undefined;
+      .where(eq(users.id, user.id))
+      .returning();
 
-  return NextResponse.json({
-    user: {
-      id: updated.id,
-      name: updated.name,
-      email: updated.email,
-      walletAddress: updated.walletAddress,
-      notificationInApp: updated.notificationInApp,
-      notificationEmail: updated.notificationEmail
-    },
-    emailConfirmation
-  });
+    if (!updated) {
+      return NextResponse.json({ error: "profile_update_failed" }, { status: 500 });
+    }
+
+    const shouldConfirmEmail =
+      parsed.data.notificationEmail === true &&
+      Boolean(updated.email) &&
+      (!user.notificationEmail || user.email !== updated.email);
+
+    const emailConfirmation = shouldConfirmEmail
+      ? await notifyUser(db, {
+          userId: updated.id,
+          type: "notifications.email_enabled",
+          title: "Email notifications enabled",
+          body: "Disputr will send dispute, verdict, API key, and webhook updates to this address.",
+          href: "/settings"
+        }).catch((error) => {
+          console.error("profile PATCH: notifyUser failed", error);
+          return undefined;
+        })
+      : undefined;
+
+    return NextResponse.json({
+      user: {
+        id: updated.id,
+        name: updated.name,
+        email: updated.email,
+        walletAddress: updated.walletAddress,
+        notificationInApp: updated.notificationInApp,
+        notificationEmail: updated.notificationEmail
+      },
+      emailConfirmation
+    });
+  } catch (error) {
+    console.error("profile PATCH: update failed", error);
+    return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
+  }
 }

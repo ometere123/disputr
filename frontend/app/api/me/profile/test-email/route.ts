@@ -6,7 +6,13 @@ import { getCurrentUser } from "@/lib/server/user";
 export const runtime = "nodejs";
 
 export async function POST() {
-  const user = await getCurrentUser();
+  let user;
+  try {
+    user = await getCurrentUser();
+  } catch (error) {
+    console.error("test-email POST: getCurrentUser failed", error);
+    return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
+  }
 
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -20,14 +26,19 @@ export async function POST() {
     return NextResponse.json({ error: "email_notifications_disabled" }, { status: 400 });
   }
 
-  const db = getDb();
-  const result = await notifyUser(db, {
-    userId: user.id,
-    type: "notifications.test_email",
-    title: "Test email delivered",
-    body: "Your Disputr email notification channel is connected.",
-    href: "/settings"
-  });
+  try {
+    const db = getDb();
+    const result = await notifyUser(db, {
+      userId: user.id,
+      type: "notifications.test_email",
+      title: "Test email delivered",
+      body: "Your Disputr email notification channel is connected.",
+      href: "/settings"
+    });
 
-  return NextResponse.json({ ok: true, result });
+    return NextResponse.json({ ok: true, result });
+  } catch (error) {
+    console.error("test-email POST: notifyUser failed", error);
+    return NextResponse.json({ error: "send_failed" }, { status: 500 });
+  }
 }

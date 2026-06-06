@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { DISPUTR_API_URL } from "@/config/app";
 
@@ -54,7 +55,9 @@ const endpoints = [
   ["POST", "/v1/webhooks", "write:webhooks", "Register an HTTPS endpoint for verdict.delivered."]
 ];
 
-export default function DocsPage() {
+export default async function DocsPage() {
+  const session = await auth().catch(() => null);
+  const isSignedIn = Boolean(session?.user);
   return (
     <main className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border/70 bg-[#fffaf5]/95 backdrop-blur">
@@ -68,12 +71,20 @@ export default function DocsPage() {
             <Link href="/developers">Developers</Link>
           </nav>
           <div className="ml-auto flex items-center gap-3">
-            <Button asChild variant="ghost" className="hidden md:inline-flex">
-              <Link href="/sign-in">Sign in</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/dashboard">Launch app</Link>
-            </Button>
+            {isSignedIn ? (
+              <Button asChild>
+                <Link href="/dashboard">Open console</Link>
+              </Button>
+            ) : (
+              <>
+                <Button asChild variant="ghost" className="hidden md:inline-flex">
+                  <Link href="/sign-in">Sign in</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/dashboard">Launch app</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
