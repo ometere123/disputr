@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Disputr">
+  <rect width="64" height="64" rx="14" fill="#21120d"/>
+  <path
+    fill="#fff8f1"
+    d="M17 12h14.5C44 12 53 20.4 53 32s-9 20-21.5 20H17V12Zm12 12v16h3.3c5.6 0 9.3-3.1 9.3-8s-3.7-8-9.3-8H29Z"
+  />
+  <circle cx="48" cy="48" r="6" fill="#c87338"/>
+</svg>

@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   },
   description: "Decentralized on-chain arbitration protocol powered by GenLayer Intelligent Contracts.",
   icons: {
-    icon: "/disputr-logo.png"
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg"
   }
 };
 

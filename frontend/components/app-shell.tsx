@@ -8,6 +8,7 @@ import {
   Search,
   Settings
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { NotificationBell } from "@/components/notification-bell";
@@ -35,8 +36,8 @@ export function AppShell({
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-border/70 bg-[#fffaf5]/90 backdrop-blur">
         <div className="flex h-16 items-center gap-5 px-4 md:px-7">
-          <Link href="/" className="mr-auto text-2xl font-extrabold tracking-normal text-primary md:w-56">
-            Disputr
+          <Link href="/" className="mr-auto flex items-center md:w-56">
+            <Image src="/disputr-logo.png" alt="Disputr" width={128} height={48} priority className="h-8 w-auto" />
           </Link>
           <div className="hidden h-11 w-full max-w-md items-center gap-3 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground md:flex">
             <Search className="size-5" />
