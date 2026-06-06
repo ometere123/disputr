@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Loader2, Unplug, Wallet } from "lucide-react";
+import { AlertTriangle, Loader2, Unplug, Wallet, X } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import * as React from "react";
 import { SiweMessage } from "siwe";
@@ -33,6 +33,7 @@ export function WalletConnect({ className }: { className?: string }) {
   const { switchChainAsync, isPending: isSwitching } = useSwitchChain();
   const [error, setError] = React.useState("");
   const [isSigning, setIsSigning] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const connector = connectors[0];
   const signedWallet = session?.user?.walletAddress;
@@ -72,6 +73,7 @@ export function WalletConnect({ className }: { className?: string }) {
       }
 
       if (result?.ok) {
+        setIsModalOpen(false);
         window.location.href = result.url ?? "/dashboard";
       }
     } catch (signError) {
@@ -119,17 +121,76 @@ export function WalletConnect({ className }: { className?: string }) {
         ? "Connect Wallet"
         : "No Wallet";
 
+  async function handlePrimaryClick() {
+    if (signedWallet) {
+      await signOut({ redirect: false });
+      disconnect();
+      return;
+    }
+
+    setError("");
+    setIsModalOpen(true);
+  }
+
   return (
     <div className={className}>
-      <Button disabled={isBusy || (!connector && !signedWallet)} onClick={() => void handleConnect()} variant={signedWallet ? "outline" : "default"}>
+      <Button disabled={isBusy || (!connector && !signedWallet)} onClick={() => void handlePrimaryClick()} variant={signedWallet ? "outline" : "default"}>
         {isBusy ? <Loader2 className="size-5 animate-spin" /> : signedWallet ? <Unplug className="size-5" /> : <Wallet className="size-5" />}
         {label}
       </Button>
-      {error ? (
-        <p className="mt-2 flex max-w-sm items-start gap-2 text-xs font-semibold text-red-700">
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-          {error}
-        </p>
+
+      {isModalOpen ? (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1b120d]/45 px-4 py-8 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-soft">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-[#ead1c2] text-primary">
+                  <Wallet className="size-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold uppercase text-muted-foreground">Disputr</p>
+                  <h2 className="text-2xl font-extrabold text-primary">Connect a wallet</h2>
+                </div>
+              </div>
+              <button
+                aria-label="Close wallet modal"
+                className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-primary"
+                onClick={() => setIsModalOpen(false)}
+                type="button"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <p className="mt-5 leading-7 text-muted-foreground">
+              Connect the wallet you want tied to your Disputr cases. We will prompt you to switch to GenLayer StudioNet
+              and sign a no-cost message.
+            </p>
+
+            <div className="mt-6 space-y-3">
+              <Button className="w-full" disabled={isBusy || !connector} onClick={() => void handleConnect()} size="lg">
+                {isBusy ? <Loader2 className="size-5 animate-spin" /> : <Wallet className="size-5" />}
+                {isConnected && address ? `Sign as ${compactAddress(address)}` : "Browser wallet"}
+              </Button>
+              {isConnected && address ? (
+                <Button className="w-full" onClick={() => disconnect()} variant="ghost">
+                  Disconnect or switch wallet
+                </Button>
+              ) : null}
+            </div>
+
+            {error ? (
+              <p className="mt-5 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                {error}
+              </p>
+            ) : null}
+
+            <p className="mt-5 text-center text-xs text-muted-foreground">
+              By continuing you agree to use Disputr with the connected wallet as your account identity.
+            </p>
+          </div>
+        </div>
       ) : null}
     </div>
   );

@@ -122,7 +122,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
-if (process.env.EMAIL_SERVER && process.env.EMAIL_FROM) {
+if (db && process.env.EMAIL_SERVER && process.env.EMAIL_FROM) {
   providers.push(
     Nodemailer({
       server: process.env.EMAIL_SERVER,
