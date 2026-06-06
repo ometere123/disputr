@@ -5,6 +5,7 @@ import * as React from "react";
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ContractStatus } from "@/components/contract-status";
+import { EvidenceBundleBuilder } from "@/components/evidence-bundle-builder";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -106,16 +107,12 @@ export function AppealForm({ disputeId }: { disputeId: string }) {
       <div className="mb-6">
         <ContractStatus />
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
-        <label>
-          <span className="font-semibold text-muted-foreground">Appeal Evidence CID *</span>
-          <Input className="mt-3" placeholder="bafy..." value={appealCid} onChange={(event) => setAppealCid(event.target.value)} />
-          <span className="mt-2 block text-sm text-muted-foreground">Passed directly to file_appeal as appeal_cid.</span>
-        </label>
+      <div className="space-y-6">
+        <EvidenceBundleBuilder side="appeal" cid={appealCid} onCidChange={setAppealCid} />
         <label>
           <span className="font-semibold text-muted-foreground">Native GEN Appeal Stake *</span>
           <Input className="mt-3" inputMode="decimal" placeholder="0.01" value={stake} onChange={(event) => setStake(event.target.value)} />
-          <span className="mt-2 block text-sm text-muted-foreground">Sent as payable value to file_appeal.</span>
+          <span className="mt-2 block text-sm text-muted-foreground">Sent as payable value to file_appeal with the generated appeal_cid.</span>
         </label>
       </div>
       {error ? <p className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</p> : null}

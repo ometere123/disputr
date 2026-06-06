@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowRight, FileUp, Info, Loader2, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileUp, Info, Loader2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { isAddress, parseEther, type Address } from "viem";
 import { useAccount } from "wagmi";
 import { ContractStatus } from "@/components/contract-status";
+import { EvidenceBundleBuilder } from "@/components/evidence-bundle-builder";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -167,9 +168,17 @@ export function DisputeForm() {
 
         {error ? <p className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</p> : null}
         {status ? (
-          <p className="mt-8 rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
-            {status}
-          </p>
+          <div className="mt-8 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700">
+            <p className="text-sm font-extrabold uppercase tracking-[0.14em]">Arbitration status</p>
+            <p className="mt-3 flex items-start gap-2 text-sm font-semibold">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+              {status}
+            </p>
+            <p className="mt-2 pl-6 text-xs leading-5 text-green-800">
+              GenLayer consensus and dashboard indexing can take a few minutes. The case will appear once the transaction
+              and database record are both available.
+            </p>
+          </div>
         ) : null}
 
         <div className="mt-8 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:justify-end">
@@ -259,27 +268,20 @@ function EvidenceStep({
     <div className="space-y-6">
       <section>
         <h2 className="border-b border-border pb-3 text-xl font-extrabold">Evidence Bundle</h2>
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          <label>
-            <span className="font-semibold text-muted-foreground">Scope Document CID</span>
+        <div className="mt-6 space-y-5">
+          <EvidenceBundleBuilder side="claimant" cid={claimantCid} onCidChange={onClaimantCidChange} />
+          <label className="block">
+            <span className="font-semibold text-muted-foreground">Optional separate scope CID</span>
             <Input className="mt-3" placeholder="bafy..." value={scopeCid} onChange={(event) => onScopeCidChange(event.target.value)} />
-          </label>
-          <label>
-            <span className="font-semibold text-muted-foreground">Claimant Evidence CID *</span>
-            <Input
-              className="mt-3"
-              placeholder="bafy..."
-              value={claimantCid}
-              onChange={(event) => onClaimantCidChange(event.target.value)}
-            />
+            <span className="mt-2 block text-sm text-muted-foreground">
+              Use this only if the scope document already has its own CID. The guided bundle can include scope text too.
+            </span>
           </label>
         </div>
       </section>
-      <div className="rounded-xl border border-dashed border-border bg-[#ead9ca] p-8 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-[#ead9ca] p-6 text-center">
         <FileUp className="mx-auto size-10 text-primary" />
-        <p className="mt-4 font-semibold text-muted-foreground">
-          Upload evidence to IPFS, then pass only the returned CID to open_dispute
-        </p>
+        <p className="mt-4 font-semibold text-muted-foreground">The contract receives the CID, not the raw evidence text.</p>
       </div>
     </div>
   );

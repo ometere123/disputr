@@ -4,9 +4,9 @@ import { Loader2, UploadCloud } from "lucide-react";
 import * as React from "react";
 import { useAccount } from "wagmi";
 import { ContractStatus } from "@/components/contract-status";
+import { EvidenceBundleBuilder } from "@/components/evidence-bundle-builder";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { contractStatus } from "@/config/genlayer";
 import { submitResponseOnChain } from "@/lib/genlayer-client";
 
@@ -89,14 +89,12 @@ export function RespondEvidenceForm({ disputeId }: { disputeId: string }) {
       <div className="mb-6">
         <ContractStatus />
       </div>
-      <label>
-        <span className="font-semibold text-muted-foreground">Respondent Evidence CID *</span>
-        <Input className="mt-3" placeholder="bafy..." value={respondentCid} onChange={(event) => setRespondentCid(event.target.value)} />
-        <span className="mt-2 block text-sm text-muted-foreground">Passed directly to submit_response as respondent_cid.</span>
-      </label>
-      <div className="mt-6 rounded-xl border border-dashed border-border bg-[#ead9ca] p-8 text-center">
+      <EvidenceBundleBuilder side="respondent" cid={respondentCid} onCidChange={setRespondentCid} />
+      <div className="mt-6 rounded-xl border border-dashed border-border bg-[#ead9ca] p-6 text-center">
         <UploadCloud className="mx-auto size-10 text-primary" />
-        <p className="mt-4 font-semibold text-muted-foreground">Upload counter-evidence to IPFS, then paste the returned CID here</p>
+        <p className="mt-4 font-semibold text-muted-foreground">
+          The generated CID is passed directly to submit_response as respondent_cid.
+        </p>
       </div>
       {error ? <p className="mt-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{error}</p> : null}
       {status ? (

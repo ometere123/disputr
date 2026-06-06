@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { FirstRunTutorial } from "@/components/first-run-tutorial";
 import { NotificationBell } from "@/components/notification-bell";
 import { SearchForm } from "@/components/search-form";
 import { WalletConnect } from "@/components/wallet-connect";
@@ -101,6 +102,8 @@ export function AppShell({
 
         <main className="w-full pb-28 md:ml-72 md:pb-10">{children}</main>
       </div>
+
+      <FirstRunTutorial />
 
       <nav className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-4 rounded-t-2xl border border-border bg-[#fffaf5] px-5 py-3 shadow-soft md:hidden">
         {navItems.slice(0, 4).map((item) => {

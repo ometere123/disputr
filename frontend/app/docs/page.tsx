@@ -21,6 +21,7 @@ const navGroups = [
       { label: "Introduction", href: "#introduction" },
       { label: "Two-sided product", href: "#audiences" },
       { label: "Pricing model", href: "#pricing-model" },
+      { label: "Evidence CIDs", href: "#evidence-cids" },
       { label: "Contract config", href: "#contracts" }
     ]
   },
@@ -158,6 +159,33 @@ export default function DocsPage() {
               <Info title="Developers" body="API keys, signed webhooks, delivery logs, and credential reads for integration teams." />
               <Info title="Protocols" body="Higher volume, retry monitoring, custom appeal windows, and audit exports for platforms." />
             </div>
+          </section>
+
+          <section id="evidence-cids" className="scroll-mt-24">
+            <h2 className="text-3xl font-extrabold text-primary">Evidence CIDs</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">
+              Users do not need to manually create CIDs. In the dispute, response, and appeal forms, they can write plain
+              text evidence. Disputr packages that text into a structured JSON bundle, uploads it to IPFS through Pinata,
+              and fills the generated CID into the contract field.
+            </p>
+            <div className="mt-5 grid gap-4 md:grid-cols-3">
+              <Info title="Plain text first" body="Write scope, evidence, deliverables, timeline, communications, and requested outcome." />
+              <Info title="CID generated" body="The app uploads the bundle off-chain and returns the immutable CID used by GenLayer." />
+              <Info title="Advanced mode" body="Technical users and B2B teams can paste an existing CID or submit one through the API." />
+            </div>
+            <CodeBlock
+              filename="evidence-bundle.json"
+              code={`{
+  "schema": "disputr.evidence.bundle.v1",
+  "side": "claimant",
+  "scope": "Milestone agreement and delivery terms...",
+  "claimantEvidence": "Work was completed and accepted...",
+  "deliverables": ["Repository", "API endpoint", "handoff notes"],
+  "timestamps": ["2026-06-06 submitted final build"],
+  "communications": "Relevant chat/email context",
+  "requestedOutcome": "Release escrow to claimant"
+}`}
+            />
           </section>
 
           <section id="contracts" className="scroll-mt-24">
@@ -320,6 +348,7 @@ function verify(body: string, secret: string, timestamp: string, signature: stri
                 [
                 ["Introduction", "#introduction"],
                 ["Pricing model", "#pricing-model"],
+                ["Evidence CIDs", "#evidence-cids"],
                 ["API keys", "#api-keys"],
                 ["Webhooks", "#webhooks"],
                 ["Endpoint reference", "#api-reference"],

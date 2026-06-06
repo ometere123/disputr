@@ -74,6 +74,7 @@ export function WalletConnect({ className }: { className?: string }) {
 
       if (result?.ok) {
         setIsModalOpen(false);
+        window.localStorage.setItem("disputr_show_welcome", "1");
         window.location.href = result.url ?? "/dashboard";
       }
     } catch (signError) {

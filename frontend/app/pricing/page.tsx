@@ -79,32 +79,36 @@ export default function PricingPage() {
           description="Disputr prices around case volume and integration depth, because the product serves both wallet users and platforms."
         />
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-6 grid gap-3 md:grid-cols-3">
           {pricingAxes.map((axis) => (
-            <Card key={axis.title} className="p-5">
-              <Sparkles className="size-5 text-primary" />
-              <h2 className="mt-4 text-lg font-extrabold">{axis.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{axis.body}</p>
+            <Card key={axis.title} className="p-4">
+              <div className="flex items-start gap-3">
+                <Sparkles className="mt-1 size-4 shrink-0 text-primary" />
+                <div>
+                  <h2 className="text-base font-extrabold">{axis.title}</h2>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">{axis.body}</p>
+                </div>
+              </div>
             </Card>
           ))}
         </div>
 
-        <section className="mt-10 grid gap-5 lg:grid-cols-4">
+        <section className="mt-7 grid items-stretch gap-4 lg:grid-cols-4">
           {tiers.map((tier) => {
             const Icon = tier.icon;
             return (
-              <Card key={tier.name} className={tier.highlighted ? "border-primary p-6 shadow-button" : "p-6"}>
+              <Card key={tier.name} className={tier.highlighted ? "flex h-full flex-col border-primary p-5 shadow-button" : "flex h-full flex-col p-5"}>
                 <div className="flex items-start justify-between gap-4">
-                  <div className="rounded-lg bg-[#fff1eb] p-3 text-primary">
-                    <Icon className="size-6" />
+                  <div className="rounded-lg bg-[#fff1eb] p-2.5 text-primary">
+                    <Icon className="size-5" />
                   </div>
                   {tier.highlighted ? <Badge>Best for builders</Badge> : null}
                 </div>
-                <h2 className="mt-6 text-2xl font-extrabold text-primary">{tier.name}</h2>
-                <p className="mt-2 min-h-10 text-sm font-semibold text-muted-foreground">{tier.audience}</p>
-                <p className="mt-5 text-5xl font-extrabold text-foreground">{tier.price}</p>
-                <p className="mt-4 min-h-24 text-sm leading-6 text-muted-foreground">{tier.description}</p>
-                <ul className="mt-6 space-y-4">
+                <h2 className="mt-5 text-xl font-extrabold text-primary">{tier.name}</h2>
+                <p className="mt-1 text-sm font-semibold text-muted-foreground">{tier.audience}</p>
+                <p className="mt-5 text-4xl font-extrabold text-foreground">{tier.price}</p>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{tier.description}</p>
+                <ul className="mt-5 space-y-3">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex gap-3 text-sm leading-6">
                       <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-[#176d44]" />
@@ -112,8 +116,8 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-6 rounded-xl bg-[#fff4eb] p-4 text-sm leading-6 text-muted-foreground">{tier.note}</p>
-                <Button asChild className="mt-6 w-full" variant={tier.highlighted ? "default" : "outline"}>
+                <p className="mt-5 rounded-xl bg-[#fff4eb] p-3 text-sm leading-6 text-muted-foreground">{tier.note}</p>
+                <Button asChild className="mt-auto w-full" variant={tier.highlighted ? "default" : "outline"}>
                   <Link href={tier.href}>
                     {tier.action} <ArrowRight className="size-4" />
                   </Link>
@@ -123,7 +127,7 @@ export default function PricingPage() {
           })}
         </section>
 
-        <section className="mt-10 rounded-[18px] border border-border bg-card p-6 shadow-soft">
+        <section className="mt-9 rounded-[18px] border border-border bg-card p-5 shadow-soft">
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
             <div>
               <div className="flex items-center gap-3">
