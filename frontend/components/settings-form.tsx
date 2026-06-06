@@ -19,6 +19,32 @@ type ProfileResponse = {
   };
 };
 
+type ApiErrorResponse = { error?: string };
+
+function profileErrorMessage(error?: string) {
+  if (error === "db_unavailable") {
+    return "Database is unreachable. Check the production DATABASE_URL and try again.";
+  }
+
+  if (error === "database_schema_mismatch") {
+    return "Supabase schema is behind. Run the latest migration, then try again.";
+  }
+
+  if (error === "email_in_use") {
+    return "That email is already tied to another Disputr account. Use that login or choose another email.";
+  }
+
+  if (error === "validation_error") {
+    return "Enter a valid display name and email address.";
+  }
+
+  if (error === "profile_update_failed") {
+    return "Could not find your profile record. Sign out, reconnect wallet, and try again.";
+  }
+
+  return "Could not save settings.";
+}
+
 export function SettingsForm() {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -47,7 +73,9 @@ export function SettingsForm() {
         }
 
         if (!response.ok) {
-          throw new Error("Profile load failed.");
+          const body = (await response.json().catch(() => ({}))) as ApiErrorResponse;
+          setError(body.error ? profileErrorMessage(body.error) : "Could not load profile settings.");
+          return;
         }
 
         const data = (await response.json()) as ProfileResponse;
@@ -99,12 +127,8 @@ export function SettingsForm() {
       }
 
       if (!response.ok) {
-        const body = (await response.json().catch(() => ({}))) as { error?: string };
-        if (body.error === "db_unavailable") {
-          setError("Database is unreachable. Try again shortly.");
-        } else {
-          setError("Could not save settings.");
-        }
+        const body = (await response.json().catch(() => ({}))) as ApiErrorResponse;
+        setError(profileErrorMessage(body.error));
         return;
       }
 
@@ -151,6 +175,10 @@ export function SettingsForm() {
             ? "Save an email address before sending a test."
             : data.error === "email_notifications_disabled"
               ? "Enable and save email notifications before sending a test."
+              : data.error === "db_unavailable"
+                ? "Database is unreachable. Save preferences must work before test email can run."
+                : data.error === "database_schema_mismatch"
+                  ? "Supabase schema is behind. Run the latest migration, then try again."
               : "Could not send test email."
         );
         return;

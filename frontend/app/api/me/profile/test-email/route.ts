@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/server/db";
+import { isSchemaMismatchError } from "@/lib/server/db-errors";
 import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
@@ -11,6 +12,10 @@ export async function POST() {
     user = await getCurrentUser();
   } catch (error) {
     console.error("test-email POST: getCurrentUser failed", error);
+    if (isSchemaMismatchError(error)) {
+      return NextResponse.json({ error: "database_schema_mismatch" }, { status: 500 });
+    }
+
     return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
   }
 
@@ -39,6 +44,10 @@ export async function POST() {
     return NextResponse.json({ ok: true, result });
   } catch (error) {
     console.error("test-email POST: notifyUser failed", error);
-    return NextResponse.json({ error: "send_failed" }, { status: 500 });
+    if (isSchemaMismatchError(error)) {
+      return NextResponse.json({ error: "database_schema_mismatch" }, { status: 500 });
+    }
+
+    return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
   }
 }

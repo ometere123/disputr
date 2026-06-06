@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/server/db";
+import { isEmailConflictError, isSchemaMismatchError } from "@/lib/server/db-errors";
 import { notifyUser } from "@/lib/server/notifications";
 import { getCurrentUser } from "@/lib/server/user";
 
@@ -21,6 +22,10 @@ export async function GET() {
     user = await getCurrentUser();
   } catch (error) {
     console.error("profile GET: getCurrentUser failed", error);
+    if (isSchemaMismatchError(error)) {
+      return NextResponse.json({ error: "database_schema_mismatch" }, { status: 500 });
+    }
+
     return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
   }
 
@@ -46,6 +51,10 @@ export async function PATCH(request: Request) {
     user = await getCurrentUser();
   } catch (error) {
     console.error("profile PATCH: getCurrentUser failed", error);
+    if (isSchemaMismatchError(error)) {
+      return NextResponse.json({ error: "database_schema_mismatch" }, { status: 500 });
+    }
+
     return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
   }
 
@@ -107,6 +116,14 @@ export async function PATCH(request: Request) {
     });
   } catch (error) {
     console.error("profile PATCH: update failed", error);
+    if (isEmailConflictError(error)) {
+      return NextResponse.json({ error: "email_in_use" }, { status: 409 });
+    }
+
+    if (isSchemaMismatchError(error)) {
+      return NextResponse.json({ error: "database_schema_mismatch" }, { status: 500 });
+    }
+
     return NextResponse.json({ error: "db_unavailable" }, { status: 500 });
   }
 }
